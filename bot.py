@@ -61,6 +61,7 @@ class Motorset:
         self.running = False
 
     def emergencyStopAll(self):
+        #this one still needs work
         for x in range(1, 4):
             MOTOR.dcCONFIG(self.plate, x, 'cw', 0, 0)
             self.motorStop(self.plate, x)
@@ -75,7 +76,17 @@ class Bot:
         self.right.moveAll(spd, back, accel)
         self.left.moveAll(spd, back, accel)
 
+    def movingTurn(self, dir, spd):
+        #side of the direction of turn moves a bit slower
+        if dir == right:
+            self.right.moveAll(spd-20)
+            self.left.moveAll(spd)
+        if dir == left:
+            self.right.moveAll(spd)
+            sefl.left.moveAll(spd-20)
+
     def turn(self, dir, spd):
+        #turn in place
         #change direction commands while motors are running are ignored
         self.stopAll()
         
