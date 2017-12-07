@@ -3,13 +3,10 @@ import time
 import random
 import atexit
 import picamera
+import Adafruit_LSM303
 from bot import Bot
-import RPi.GPIO as GPIO  
-GPIO.setmode(GPIO.BCM)
-#http://raspi.tv/2013/how-to-use-interrupts-with-python-on-the-raspberry-pi-and-rpi-gpio-part-2
 
-def command(message):
-    #issue a new standing order from library of bot movements
+bot = Bot()
 
 class wander(threading.Thread):
     #def __init__(self):
@@ -18,34 +15,57 @@ class wander(threading.Thread):
         self.stop_event = threading.Event()
         commands = ['forward', 'right', 'left']
         while (not self.stop_event.is_set()):
-            command(random.choice(commands))
+            self.command = random.choice(commands)
+            #command(random.choice(commands))
             self.stop_event.wait(random.uniform(0,3))
 
     def stop(self):
         self.stop_event.set()
 
 
-class reflexes(threading.Thread):
+class balance_reflex(threading.Thread):
     #def __init__(self):
 
     def run(self):
-        #when sensors indicate problems, generate move commands to avoid
-        GPIO.setup()#not sure what all the options here mean
-        GPIO.add_event_detect()#this is where callback gets specified
+        lsm303 = Adafruit_LSM303.LSM303()
+        self.stop_event = threading.Event()
+        while (not self.stop_event.is_set()):
+            accel, mag = lsm303.read()
+            accel_x, accel_y, accel_z = accel
+            mag_x, mag_z, mag_y = mag
+            #note different order of axes
+            #do something with the results of the accelerometer read
+            #if tilted too far, backup otherwise do nothing
+            #also need to control for noise, for now just set the limits very conservatively
+            if accel_x > 450:
+                self.command = 'back'
+            else:
+                self.command = ''
+            #backup will need to override the wander module
+            time.sleep(0.5)
 
-        camera = picamera.PiCamera()
-        #how to process camera images in real time without storing anything?
+def command(message):
+    if message == 'forward':
+        bot.move(40)
+    if message == 'left' OR message == 'right':
+        bot.movingTurn(message, 40)
+    if message == 'back':
+        bot.move(35, true)
 
-    def callback(self, channel):
-        #is this going to get called anytime the sensor's value changes? debounce?
+thread1 = wander()
+thread1.start()
+thread2 = balance_reflex()
+thread2.start()
 
-
-
-#thread1 = wander()
-#thread1.start()
+while(1):
+    if thread2.command:
+        command(thread2.command)
+    elif thread1.command:
+        command(thread1.command)
+    time.sleep(0.1)
 
 #kill modules on exiting main program
 def killModules():
     thread1.stop()
-    GPIO.cleanup()
+    thread2.stop()
 atexit.register(killModules)

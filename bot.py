@@ -78,10 +78,10 @@ class Bot:
 
     def movingTurn(self, dir, spd):
         #side of the direction of turn moves a bit slower
-        if dir == right:
+        if dir == 'right':
             self.right.moveAll(spd-20)
             self.left.moveAll(spd)
-        if dir == left:
+        if dir == 'left':
             self.right.moveAll(spd)
             sefl.left.moveAll(spd-20)
 
