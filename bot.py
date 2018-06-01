@@ -71,10 +71,17 @@ class Bot:
     def __init__(self):
         self.right = Motorset('right')
         self.left = Motorset('left')
+        self.backward = False
 
     def move(self, spd, back=False, accel=.5):
+        #check if the new command is a change in direction
+        if back != self.backward:
+            self.stopAll()
+        
         self.right.moveAll(spd, back, accel)
         self.left.moveAll(spd, back, accel)
+        
+        self.backward = back
 
     def movingTurn(self, dir, spd):
         #side of the direction of turn moves a bit slower
@@ -83,7 +90,7 @@ class Bot:
             self.left.moveAll(spd)
         if dir == 'left':
             self.right.moveAll(spd)
-            sefl.left.moveAll(spd-20)
+            self.left.moveAll(spd-20)
 
     def turn(self, dir, spd):
         #turn in place

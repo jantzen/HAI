@@ -12,6 +12,7 @@ class wander(threading.Thread):
     #def __init__(self):
 
     def run(self):
+        self.command = ''
         self.stop_event = threading.Event()
         commands = ['forward', 'right', 'left']
         while (not self.stop_event.is_set()):
@@ -27,6 +28,7 @@ class balance_reflex(threading.Thread):
     #def __init__(self):
 
     def run(self):
+        self.command = ''
         lsm303 = Adafruit_LSM303.LSM303()
         self.stop_event = threading.Event()
         while (not self.stop_event.is_set()):
@@ -47,10 +49,10 @@ class balance_reflex(threading.Thread):
 def command(message):
     if message == 'forward':
         bot.move(40)
-    if message == 'left' OR message == 'right':
+    if message == 'left' or message == 'right':
         bot.movingTurn(message, 40)
     if message == 'back':
-        bot.move(35, true)
+        bot.move(35, True)
 
 thread1 = wander()
 thread1.start()
