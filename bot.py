@@ -80,8 +80,20 @@ class Bot:
         
         self.right.moveAll(spd, back, accel)
         self.left.moveAll(spd, back, accel)
-        
-        self.backward = back
+
+    def moveBack(self, spd, back=True, accel=.5):
+        #move the physical machine backwards
+        self.right.moveAll(spd, True)
+        self.left.moveAll(spd, True)
+
+    def backTurn(self, dir, spd):
+        #turn while moving backwards
+        if dir == 'right':
+            self.right.moveAll(spd-20)
+
+        if dir == 'left':
+            self.right.moveAll(spd-20)
+
 
     def movingTurn(self, dir, spd):
         #side of the direction of turn moves a bit slower

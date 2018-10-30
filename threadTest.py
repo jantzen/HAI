@@ -5,6 +5,7 @@ import atexit
 import picamera
 import Adafruit_LSM303
 from bot import Bot
+import videoTest
 
 bot = Bot()
 
@@ -23,6 +24,15 @@ class wander(threading.Thread):
     def stop(self):
         self.stop_event.set()
 
+class pursue(threading.Thread):
+    #def__init__(self):
+
+    def run(self):
+        self.command = ' '
+        camera = PiCamera()
+
+class avoid(threading.Thread):
+        
 
 class balance_reflex(threading.Thread):
     #def __init__(self):
@@ -58,6 +68,10 @@ thread1 = wander()
 thread1.start()
 thread2 = balance_reflex()
 thread2.start()
+thread3 = pursue()
+thread3.start()
+thread4 = avoid()
+thread4.start()
 
 while(1):
     if thread2.command:
@@ -70,4 +84,6 @@ while(1):
 def killModules():
     thread1.stop()
     thread2.stop()
+    thread3.stop()
+    thread4.stop()
 atexit.register(killModules)

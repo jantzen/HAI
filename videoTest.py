@@ -9,7 +9,6 @@ camera.resolution = (640, 480)
 camera.framerate = 32
 rawCapture = PiRGBArray(camera, size=(640, 480))
 
-time.sleep(0.1)
 
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
     hsv = cv2.cvtColor(frame.array, cv2.COLOR_BGR2HSV)
@@ -43,6 +42,14 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     key = cv2.waitKey(1) & 0xFF
     
     rawCapture.truncate(0)
+
+    time.sleep(1.0)
+
+    if len(contours) > 0:
+        blueX = [item[0] for item in hsv]
+        print(blueX)
+        #print(hsv)
+
     
     if key == ord("q"):
         break
