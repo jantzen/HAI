@@ -1,0 +1,67 @@
+
+# getck method based partly on code from
+# https://stackoverflow.com/questions/22397289/finding-the-values-of-the-arrow-keys-in-python-why-are-they-triples
+
+import sys
+import tty
+import termios
+import piplates.MOTORplate as MOTOR
+
+
+class WheeledChassis(object):
+    """ left side is address 0
+        right side is address 1
+        wheel 1 is front, wheel 2 is middle, wheel 3 is rear
+    """
+
+    def __init__(self):
+        # get the motors ready to run
+
+def closeout():
+    pass
+
+def getck():
+    """ Returns motion command based on control key press."""
+    fd = sys.stdin.fileno()
+    orig_settings = termios.tcgetattr(fd)
+    try:
+        tty.setcbreak(sys.stdin.fileno())
+        tpl = []
+        while(True):
+            ch = sys.stdin.read(1)
+            if ch=='q':
+                closeout()
+            if not ch=='':
+                tpl.append(ch)
+            if not tpl[0] == '\x1b':
+                # not an escaped character, so ignore
+                tpl = []
+            elif len(tpl) == 3:
+                tpl = ''.join(tpl)
+                if tpl=='\x1b[A':
+                        return 'FORWARD'
+                elif tpl=='\x1b[B':
+                        return 'BACKWARD'
+                elif tpl=='\x1b[C':
+                        return 'RIGHTWARD'
+                elif tpl=='\x1b[D':
+                        return 'LEFTWARD'
+                else:
+                    print('not an arrow key')
+                    tpl = []
+    except KeyboardInterrupt:
+        print("terminated by user... cleaning up")
+    except:
+        closeout()
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, orig_settings)
+
+
+def main():
+    out = getck()
+    print(out)
+
+
+
+if __name__=='__main__':
+        main()
