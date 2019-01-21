@@ -26,6 +26,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
         c = max(contours, key = cv2.contourArea)
         x,y,w,h = cv2.boundingRect(c)
         cv2.rectangle(masked,(x,y),(x+w,y+h),(0,255,0),2)
+        xCenter = ((x + (x+w))/2)
     
     #for c in contours:
         #approx = cv2.approxPolyDP(c,0.01*cv2.arcLength(c,True),True)
@@ -34,6 +35,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     
     cv2.imshow("Original", frame.array)
     cv2.imshow("Color Match", masked)
+    #cv2.imshow("Center", xCenter)
     #cv2.imshow("Mask", mask)
     #cv2.imshow("Threshold", thresh)
     #cv2.imshow("Dilation", dilation)
@@ -45,11 +47,5 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 
     time.sleep(1.0)
 
-    if len(contours) > 0:
-        blueX = [item[0] for item in hsv]
-        print(blueX)
-        #print(hsv)
-
-    
     if key == ord("q"):
         break

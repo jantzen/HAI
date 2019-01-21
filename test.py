@@ -5,7 +5,11 @@ from bot import Bot
 bot = Bot()
 
 #test movements
-bot.stopAll()
 bot.move(50)
-time.sleep(1)
-bot.stopAll()
+bot.moveBack(50)
+bot.backTurn(right)
+bot.backTurn(left)
+bot.movingTurn(right)
+bot.movingTurn(left)
+bot.turn(right)
+bot.turn(left)
