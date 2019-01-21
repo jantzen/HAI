@@ -93,6 +93,7 @@ class RuntRover(object):
         # decrease speed of left bank
         for m in self._LEFT:
             if m._stopped:
+                MOTOR.dcCONFIG(m._address, m._number, m.direction, 0, m._acceleration)
                 MOTOR.dcSTART(m._address, m._number)
             tmp = m.speed - increment
             if tmp >= 0 and m.direction == m._forward:
@@ -121,11 +122,12 @@ class RuntRover(object):
                 MOTOR.dcSTART(m._address, m._number)
                 time.sleep(m._acceleration)
                 m.speed = -new_speed
-            print("motor: {0}, {1}    speed: {2}".format(m._address, m._number, m.speed))
+            print("motor: {0}, {1}    speed: {2}    direction: {3}".format(m._address, m._number, m.speed, m.direction))
 
         # increase speed of right bank
         for m in self._RIGHT:
             if m._stopped:
+                MOTOR.dcCONFIG(m._address, m._number, m.direction, 0, m._acceleration)
                 MOTOR.dcSTART(m._address, m._number)
             tmp = m.speed + increment
             if tmp >= 0 and m.direction == m._forward:
@@ -154,7 +156,7 @@ class RuntRover(object):
                 MOTOR.dcSTART(m._address, m._number)
                 time.sleep(m._acceleration)
                 m.speed = -new_speed
-            print("motor: {0}, {1}    speed: {2}".format(m._address, m._number, m.speed))
+            print("motor: {0}, {1}    speed: {2}    direction: {3}".format(m._address, m._number, m.speed, m.direction))
 
 
 
@@ -162,6 +164,7 @@ class RuntRover(object):
         # decrease speed of right bank
         for m in self._RIGHT:
             if m._stopped:
+                MOTOR.dcCONFIG(m._address, m._number, m.direction, 0, m._acceleration)
                 MOTOR.dcSTART(m._address, m._number)
             tmp = m.speed - increment
             if tmp >= 0 and m.direction == m._forward:
@@ -192,11 +195,12 @@ class RuntRover(object):
                 MOTOR.dcSTART(m._address, m._number)
                 time.sleep(m._acceleration)
                 m.speed = -new_speed
-            print("motor: {0}, {1}    speed: {2}".format(m._address, m._number, m.speed))
+            print("motor: {0}, {1}    speed: {2}    direction: {3}".format(m._address, m._number, m.speed, m.direction))
 
         # increase speed of left bank
         for m in self._LEFT:
             if m._stopped:
+                MOTOR.dcCONFIG(m._address, m._number, m.direction, 0, m._acceleration)
                 MOTOR.dcSTART(m._address, m._number)
             tmp = m.speed + increment
             if tmp >= 0 and m.direction == m._forward:
@@ -227,13 +231,14 @@ class RuntRover(object):
                 MOTOR.dcSTART(m._address, m._number)
                 time.sleep(m._acceleration)
                 m.speed = -new_speed
-            print("motor: {0}, {1}    speed: {2}".format(m._address, m._number, m.speed))
+            print("motor: {0}, {1}    speed: {2}    direction: {3}".format(m._address, m._number, m.speed, m.direction))
 
 
     def forward(self, increment):
         # increase forward speed of both banks
         for m in self._LEFT + self._RIGHT:
             if m._stopped:
+                MOTOR.dcCONFIG(m._address, m._number, m.direction, 0, m._acceleration)
                 MOTOR.dcSTART(m._address, m._number)
             tmp = m.speed + increment
             if tmp >= 0 and m.direction == m._forward:
@@ -264,13 +269,14 @@ class RuntRover(object):
                 MOTOR.dcSPEED(m._address, m._number, new_speed)
                 time.sleep(m._acceleration)
                 m.speed = -new_speed
-            print("motor: {0}, {1}    speed: {2}".format(m._address, m._number, m.speed))
+            print("motor: {0}, {1}    speed: {2}    direction: {3}".format(m._address, m._number, m.speed, m.direction))
 
 
     def reverse(self, increment):
         # decrease forward speed of both banks
         for m in self._LEFT + self._RIGHT:
             if m._stopped:
+                MOTOR.dcCONFIG(m._address, m._number, m.direction, 0, m._acceleration)
                 MOTOR.dcSTART(m._address, m._number)
             tmp = m.speed - increment
             if tmp >= 0 and m.direction == m._forward:
@@ -301,7 +307,7 @@ class RuntRover(object):
                 MOTOR.dcSPEED(m._address, m._number, new_speed)
                 time.sleep(m._acceleration)
                 m.speed = -new_speed
-            print("motor: {0}, {1}    speed: {2}".format(m._address, m._number, m.speed))
+            print("motor: {0}, {1}    speed: {2}    direction: {3}".format(m._address, m._number, m.speed, m.direction))
 
 
     def stop(self):
@@ -312,7 +318,7 @@ class RuntRover(object):
             m._direction = m._forward
             MOTOR.dcCONFIG(m._address, m._number, m.direction, m.speed, m._acceleration)
             m._stopped = True
-            print("motor: {0}, {1}    speed: {2}".format(m._address, m._number, m.speed))
+            print("motor: {0}, {1}    speed: {2}    direction: {3}".format(m._address, m._number, m.speed, m.direction))
 
 
 class Controller(object):
@@ -407,9 +413,11 @@ def monitor():
     import cv2
     
     camera = PiCamera()
-    camera.resolution = (640, 480)
+#    camera.resolution = (640, 480)
+    camera.resolution = (320, 240)
     camera.framerate = 32
-    rawCapture = PiRGBArray(camera, size=(640, 480))
+#    rawCapture = PiRGBArray(camera, size=(640, 480))
+    rawCapture = PiRGBArray(camera, size=(320, 240))
     
     
     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
