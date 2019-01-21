@@ -1,51 +1,15 @@
-#import piplates.MOTORplate as MOTO
-#import time
-#
-#FORWARD = [['cw','cw','cw'],['ccw','ccw','ccw']]
-#REVERSE = [['ccw','ccw','ccw'],['cw','cw','cw']]
-#
-#for i in range(1,4):
-#    MOTO.dcCONFIG(0, i, FORWARD[0][i-1], 50, 1)
-#    MOTO.dcCONFIG(1, i, FORWARD[1][i-1], 50, 1)
-#
-#for i in range(2):
-#    for j in range(1,4):
-#        MOTO.dcSTART(i,j)
-#
-#time.sleep(2.5)
-#
-#for i in range(2):
-#    for j in range(1,4):
-#        MOTO.dcSTOP(i,j)
-#
-#time.sleep(1.)
-#
-#for i in range(1,4):
-#    MOTO.dcCONFIG(0, i, REVERSE[0][i-1], 50, 1)
-#    MOTO.dcCONFIG(1, i, REVERSE[1][i-1], 50, 1)
-#
-#for i in range(2):
-#    for j in range(1,4):
-#        MOTO.dcSTART(i,j)
-#
-#time.sleep(2.5)
-#
-#for i in range(2):
-#    for j in range(1,4):
-#        MOTO.dcSTOP(i,j)
-#
-
-
-# getck method based partly on code from
-# https://stackoverflow.com/questions/22397289/finding-the-values-of-the-arrow-keys-in-python-why-are-they-triples
+# manual_drive.py
 
 import sys
+import os
 import tty
 import termios
 import piplates.MOTORplate as MOTOR
 import RPi.GPIO as GPIO
 import time
 import pdb
+from multiprocessing import Process
+
 
 dummy0=MOTOR.getINTflag1(0)  #flush out any old interrupts
 dummy1=MOTOR.getINTflag1(1)  #flush out any old interrupts
@@ -157,7 +121,7 @@ class RuntRover(object):
                 MOTOR.dcSTART(m._address, m._number)
                 time.sleep(m._acceleration)
                 m.speed = -new_speed
-            print("left speed: {}".format(m.speed))
+            print("motor: {0}, {1}    speed: {2}".format(m._address, m._number, m.speed))
 
         # increase speed of right bank
         for m in self._RIGHT:
@@ -190,7 +154,7 @@ class RuntRover(object):
                 MOTOR.dcSTART(m._address, m._number)
                 time.sleep(m._acceleration)
                 m.speed = -new_speed
-            print("right speed: {}".format(m.speed))
+            print("motor: {0}, {1}    speed: {2}".format(m._address, m._number, m.speed))
 
 
 
@@ -228,7 +192,7 @@ class RuntRover(object):
                 MOTOR.dcSTART(m._address, m._number)
                 time.sleep(m._acceleration)
                 m.speed = -new_speed
-            print("right speed: {}".format(m.speed))
+            print("motor: {0}, {1}    speed: {2}".format(m._address, m._number, m.speed))
 
         # increase speed of left bank
         for m in self._LEFT:
@@ -263,7 +227,7 @@ class RuntRover(object):
                 MOTOR.dcSTART(m._address, m._number)
                 time.sleep(m._acceleration)
                 m.speed = -new_speed
-            print("left speed: {}".format(m.speed))
+            print("motor: {0}, {1}    speed: {2}".format(m._address, m._number, m.speed))
 
 
     def forward(self, increment):
@@ -300,7 +264,7 @@ class RuntRover(object):
                 MOTOR.dcSPEED(m._address, m._number, new_speed)
                 time.sleep(m._acceleration)
                 m.speed = -new_speed
-            print(m.speed)
+            print("motor: {0}, {1}    speed: {2}".format(m._address, m._number, m.speed))
 
 
     def reverse(self, increment):
@@ -337,63 +301,138 @@ class RuntRover(object):
                 MOTOR.dcSPEED(m._address, m._number, new_speed)
                 time.sleep(m._acceleration)
                 m.speed = -new_speed
-            print(m.speed)
+            print("motor: {0}, {1}    speed: {2}".format(m._address, m._number, m.speed))
 
 
     def stop(self):
         for m in self._LEFT + self._RIGHT:
             MOTOR.dcSTOP(m._address, m._number)
+            time.sleep(m._acceleration)
             m.speed = 0
             m._direction = m._forward
+            MOTOR.dcCONFIG(m._address, m._number, m.direction, m.speed, m._acceleration)
             m._stopped = True
+            print("motor: {0}, {1}    speed: {2}".format(m._address, m._number, m.speed))
 
 
-def closeout():
-    GPIO.cleanup()
+class Controller(object):
+    def __init__(self, increment=10, video=False):
+        self._robot = RuntRover()
+        self._increment = increment
+        self._run = False
 
+    def start(self):
+        try:
+            self._run = True
+            while self._run:
+                cmd = self.getck()
+                if cmd == 'SPACE':
+                    self._robot.stop()
+                if cmd == 'FORWARD':
+                    self._robot.forward(self._increment)
+                if cmd == 'BACKWARD':
+                    self._robot.reverse(self._increment)
+                if cmd == 'LEFTWARD':
+                    self._robot.left(self._increment)
+                if cmd == 'RIGHTWARD':
+                    self._robot.right(self._increment)
 
-def getck():
-    """ Returns motion command based on control key press."""
-    fd = sys.stdin.fileno()
-    orig_settings = termios.tcgetattr(fd)
-    try:
-        tty.setcbreak(sys.stdin.fileno())
-        tpl = []
-        while(True):
-            ch = sys.stdin.read(1)
-            if ch=='q':
-                closeout()
-            if not ch=='':
-                tpl.append(ch)
-            if not tpl[0] == '\x1b':
-                # not an escaped character, so ignore
-                tpl = []
-            elif len(tpl) == 3:
-                tpl = ''.join(tpl)
-                if tpl=='\x1b[A':
-                        return 'FORWARD'
-                elif tpl=='\x1b[B':
-                        return 'BACKWARD'
-                elif tpl=='\x1b[C':
-                        return 'RIGHTWARD'
-                elif tpl=='\x1b[D':
-                        return 'LEFTWARD'
-                else:
-                    print('not an arrow key')
+        except KeyboardInterrupt:
+            self._robot.stop()
+            self.cleanup()
+
+        except:
+            self._robot.stop()
+            self.cleanup()
+
+        finally:
+            self._robot.stop()
+            self.cleanup()
+
+    def stop(self):
+        pass
+
+    def cleanup(self):
+        self._run = False
+
+    def getck(self):
+        """ Returns motion command based on control key press."""
+        fd = sys.stdin.fileno()
+        orig_settings = termios.tcgetattr(fd)
+        try:
+            tty.setcbreak(sys.stdin.fileno())
+            tpl = []
+            while(True):
+                ch = sys.stdin.read(1)
+                if ch=='q':
+                    self.cleanup()
+                    break
+                if ch==' ':
+                    return 'SPACE'
+                if not ch=='':
+                    tpl.append(ch)
+                if not tpl[0] == '\x1b':
+                    # not an escaped character, so ignore
                     tpl = []
-    except KeyboardInterrupt:
-        print("terminated by user... cleaning up")
-    except:
-        closeout()
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, orig_settings)
+                elif len(tpl) == 3:
+                    tpl = ''.join(tpl)
+                    if tpl=='\x1b[A':
+                            return 'FORWARD'
+                    elif tpl=='\x1b[B':
+                            return 'BACKWARD'
+                    elif tpl=='\x1b[C':
+                            return 'RIGHTWARD'
+                    elif tpl=='\x1b[D':
+                            return 'LEFTWARD'
+                    else:
+                        tpl = []
+        except KeyboardInterrupt:
+            print("terminated by user... cleaning up")
+            self.cleanup()
+        except:
+            self.cleanup()
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, orig_settings)
 
 
 def main():
-    out = getck()
-    print(out)
+    c = Controller()
+    c.start()
 
 
+def monitor():
+    from picamera.array import PiRGBArray
+    from picamera import PiCamera
+    import time
+    import cv2
+    
+    camera = PiCamera()
+    camera.resolution = (640, 480)
+    camera.framerate = 32
+    rawCapture = PiRGBArray(camera, size=(640, 480))
+    
+    
+    for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+        cv2.imshow("Live", frame.array)
+    
+        rawCapture.truncate(0)
+    
+        key = cv2.waitKey(1) & 0xFF
+    
+        if key == ord("q"):
+            break
 
 if __name__=='__main__':
-        main()
+        video = False
+        args = sys.argv
+        if len(args)> 1:
+            if args[1] == 'video':
+                video = True
+        if video:
+            mon_proc = Process(target = monitor)
+#            main_proc = Process(target = main)
+            mon_proc.start()
+#            main_proc.start()
+            main()
+        else:
+            main()
