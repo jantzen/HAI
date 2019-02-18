@@ -9,8 +9,8 @@ while True:
     accel,mag = lsm303.read()
     accel_x, accel_y, accel_z = accel
 
-    if(accel_x > ?):
-        bot.stopAll()
+    #if(accel_x > ?):
+        #bot.stopAll()
     
     if (accel_x < -650):
         bot.moveBack()
@@ -26,5 +26,5 @@ while True:
     
 
 
-    time.sleep(.50)
+    time.sleep(1.0)
         

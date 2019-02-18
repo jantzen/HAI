@@ -9,6 +9,8 @@ import RPi.GPIO as GPIO
 import time
 import pdb
 from multiprocessing import Process
+import Adafruit_LSM303
+
 
 
 dummy0=MOTOR.getINTflag1(0)  #flush out any old interrupts
@@ -396,9 +398,41 @@ class Controller(object):
 
 
 def main():
+    #threading/queue goes here
+    t = tiltSwitch()
     c = Controller()
     c.start()
+    t.start()
 
+
+class tiltSwitch(object):
+
+    lsm303 = Adafruit_LSM303.LSM303()
+
+    def __init__(self, increment=10, video=False):
+        self._robot = RuntRover()
+        self._increment = increment
+        self._run = False
+
+    def start(self):
+        while self._run = True:
+            accel = lsm303.read()
+            accel_x, accel_y, accel_z = accel
+
+            #if(accel_x > ?):
+                #self._robot.stop()
+            
+            if (accel_x < -650):
+                self._robot.stop()
+            
+            if (accel_y < -550):
+                self._robot.stop()
+            
+            if (accel_y > 475):
+                self._robot.stop()
+
+    def stop(self):
+        pass
 
 def monitor():
     from picamera.array import PiRGBArray
