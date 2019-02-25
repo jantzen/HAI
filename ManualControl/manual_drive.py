@@ -318,10 +318,12 @@ class RuntRover(object):
 
 
 class Controller(object):
-    def __init__(self, increment=10, video=False):
+    def __init__(self, increment=10, video=False, test_modules=None):
         self._robot = RuntRover()
         self._increment = increment
         self._run = False
+        if test_modules is not None:
+            self._test_modules = test_modules
 
     def start(self):
         try:
@@ -338,6 +340,8 @@ class Controller(object):
                     self._robot.left(self._increment)
                 if cmd == 'RIGHTWARD':
                     self._robot.right(self._increment)
+                for test in self._test_modules:
+                    test.execute(self._robot)
 
         except KeyboardInterrupt:
             self._robot.stop()
@@ -399,40 +403,31 @@ class Controller(object):
 
 def main():
     #threading/queue goes here
-    t = tiltSwitch()
-    c = Controller()
+#    c = Controller()
+    c = Controller(test_modules=[tiltSwitch()])
     c.start()
-    t.start()
 
 
 class tiltSwitch(object):
+    def __init__(self, robot):
+        self._lsm303 = Adafruit_LSM303.LSM303()
+        self._robot = robot
+    
+    def execute():
+        accel = lsm303.read()
+        accel_x, accel_y, accel_z = accel
 
-    lsm303 = Adafruit_LSM303.LSM303()
-
-    def __init__(self, increment=10, video=False):
-        self._robot = RuntRover()
-        self._increment = increment
-        self._run = False
-
-    def start(self):
-        while self._run = True:
-            accel = lsm303.read()
-            accel_x, accel_y, accel_z = accel
-
-            #if(accel_x > ?):
-                #self._robot.stop()
-            
-            if (accel_x < -650):
-                self._robot.stop()
-            
-            if (accel_y < -550):
-                self._robot.stop()
-            
-            if (accel_y > 475):
-                self._robot.stop()
-
-    def stop(self):
-        pass
+        #if(accel_x > ?):
+            #self._robot.stop()
+        
+        if (accel_x < -650):
+            self._robot.stop()
+        
+        if (accel_y < -550):
+            self._robot.stop()
+        
+        if (accel_y > 475):
+            self._robot.stop()
 
 def monitor():
     from picamera.array import PiRGBArray
