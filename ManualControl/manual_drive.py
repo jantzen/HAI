@@ -414,20 +414,21 @@ class tiltSwitch(object):
         self._robot = robot
     
     def execute():
-        accel = lsm303.read()
-        accel_x, accel_y, accel_z = accel
+        while (True):
+            accel = lsm303.read()
+            accel_x, accel_y, accel_z = accel
 
-        #if(accel_x > ?):
-            #self._robot.stop()
+                #if(accel_x > ?):
+                #self._robot.stop()
         
-        if (accel_x < -650):
-            self._robot.stop()
+            if (accel_x < -650):
+                self._robot.stop()
         
-        if (accel_y < -550):
-            self._robot.stop()
+            if (accel_y < -550):
+                self._robot.stop()
         
-        if (accel_y > 475):
-            self._robot.stop()
+            if (accel_y > 475):
+                self._robot.stop()
 
 def monitor():
     from picamera.array import PiRGBArray
