@@ -411,24 +411,23 @@ def main():
 class tiltSwitch(object):
     def __init__(self, robot):
         self._lsm303 = Adafruit_LSM303.LSM303()
-        self._robot = robot
+        self._robot = RuntRover()
     
     def execute():
-        while (True):
-            accel = lsm303.read()
-            accel_x, accel_y, accel_z = accel
+        accel = lsm303.read()
+        accel_x, accel_y, accel_z = accel
 
                 #if(accel_x > ?):
                 #self._robot.stop()
         
-            if (accel_x < -650):
-                self._robot.stop()
+        if (accel_x < -650):
+            self._robot.stop()
         
-            if (accel_y < -550):
-                self._robot.stop()
+        if (accel_y < -550):
+            self._robot.stop()
         
-            if (accel_y > 475):
-                self._robot.stop()
+        if (accel_y > 475):
+            self._robot.stop()
 
 def monitor():
     from picamera.array import PiRGBArray
