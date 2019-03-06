@@ -340,8 +340,8 @@ class Controller(object):
                     self._robot.left(self._increment)
                 if cmd == 'RIGHTWARD':
                     self._robot.right(self._increment)
-                for test in self._test_modules:
-                    test.execute(self._test_modules)
+                for test_modules in self._test_modules:
+                    test_modules.execute(self._test_modules)
 
         except KeyboardInterrupt:
             self._robot.stop()
@@ -416,7 +416,7 @@ class tiltSwitch(object):
     def execute():
 
         while (True):
-            accel = lsm303.read()
+            accel = self._lsm303.read()
             accel_x, accel_y, accel_z = accel
 
                 #if(accel_x > ?):
