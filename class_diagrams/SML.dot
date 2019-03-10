@@ -1,0 +1,56 @@
+digraph SensorimotorModules {
+fontname = "Bitstream Vera Sans"
+fontsize = 8
+
+node [
+fontname = "Bitstream Vera Sans"
+fontsize = 8
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+
+SensorimotorModule [
+label = "{SensorimotorModule|- afferent_sockets : list of multiprocessing.Queue objects\l- efferent_sockets : list of multiprocessing.Queue objects\l|+ start()\l}"
+]
+
+Sensor [
+label = "{Sensor|\l|\l}"
+]
+
+Actuator [
+label = "{Actuator|\l|\l}"
+]
+
+Internode [
+label = "{Internode|\l|\l}"
+]
+
+SensorimotorModule -> Sensor [dir=back]
+SensorimotorModule -> Actuator [dir=back]
+SensorimotorModule -> Internode [dir=back]
+
+Camera [
+]
+
+Tilt [
+]
+
+Contact [
+]
+
+Sensor -> Camera [dir=back]
+Sensor -> Tilt [dir=back]
+Sensor -> Contact [dir=back]
+
+DCmotor [
+]
+
+DCwheel [
+]
+
+Actuator -> DCmotor [dir=back]
+DCmotor -> DCwheel [dir=back]
+}
