@@ -318,7 +318,7 @@ class RuntRover(object):
 
 
 class Controller(object):
-    def __init__(self, increment=10, video=False,test_modules=None):
+    def __init__(self, increment=10, video=False, test_modules = None):
         self._robot = RuntRover()
         self._increment = increment
         self._run = False
@@ -340,8 +340,8 @@ class Controller(object):
                     self._robot.left(self._increment)
                 if cmd == 'RIGHTWARD':
                     self._robot.right(self._increment)
-                for test_modules in self._test_modules:
-                    test_modules.execute(self._test_modules)
+                for test in self._test_modules:
+                    test_modules.execute()
 
         except KeyboardInterrupt:
             self._robot.stop()
@@ -423,13 +423,13 @@ class tiltSwitch(object):
                 #self._robot.stop()
         
             if (accel_x < -650):
-                self._robot.stop()
+                print("backing up")
         
             if (accel_y < -550):
-                self._robot.stop()
+                print("left tilt")
         
             if (accel_y > 475):
-                self._robot.stop()
+                print("right tilt")
 
 def monitor():
     from picamera.array import PiRGBArray

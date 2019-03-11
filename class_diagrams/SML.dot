@@ -17,11 +17,11 @@ label = "{SensorimotorModule|- afferent_sockets : list of multiprocessing.Queue 
 ]
 
 Sensor [
-label = "{Sensor|\l|\l}"
+label = "{Sensor|\l|+ go_right()\l +go_left()\1 +go_forward()\1 +go_reverse()\1}"
 ]
 
 Actuator [
-label = "{Actuator|\l|\l}"
+label = "{Actuator|\l|+ right()\l +left()\1 +forward()\1 +reverse()\1}"
 ]
 
 Internode [
@@ -32,13 +32,13 @@ SensorimotorModule -> Sensor [dir=back]
 SensorimotorModule -> Actuator [dir=back]
 SensorimotorModule -> Internode [dir=back]
 
-Camera [
+Camera [ label = "{Camera|-intensity_left : int \1 -intensity_center : int\1 -intensity_right : int| \1}"
 ]
 
-Tilt [
+Tilt [ label = "{Tilt| -accel_x : int \1 -accel_y : int\1|\1}"
 ]
 
-Contact [
+Contact [ label = "{Contact | -is_activated : Bool \1|\1}"
 ]
 
 Sensor -> Camera [dir=back]
@@ -53,4 +53,4 @@ DCwheel [
 
 Actuator -> DCmotor [dir=back]
 DCmotor -> DCwheel [dir=back]
-}
+

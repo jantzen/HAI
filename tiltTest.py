@@ -10,18 +10,18 @@ while True:
     accel_x, accel_y, accel_z = accel
 
     #if(accel_x > ?):
-        #bot.stopAll()
+        #bot.stopAll()2
     
     if (accel_x < -650):
-        bot.moveBack()
+        print("rad")
         
     
     if (accel_y < -550):
-        bot.backTurn(left)
+        print("cool")
         
    
     if (accel_y > 475):
-        bot.backTurn(right)
+        print("right on")
         
     
 
