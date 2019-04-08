@@ -318,12 +318,11 @@ class RuntRover(object):
 
 
 class Controller(object):
-    def __init__(self, increment=10, video=False, test_modules = None):
+    def __init__(self, increment=10, video=False):
         self._robot = RuntRover()
         self._increment = increment
         self._run = False
-        if test_modules is not None:
-            self._test_modules = test_modules
+        
 
     def start(self):
         try:
@@ -340,8 +339,7 @@ class Controller(object):
                     self._robot.left(self._increment)
                 if cmd == 'RIGHTWARD':
                     self._robot.right(self._increment)
-                for test in self._test_modules:
-                    test_modules.execute()
+                
 
         except KeyboardInterrupt:
             self._robot.stop()
@@ -404,9 +402,10 @@ class Controller(object):
 def main():
     #threading/queue goes here
 #    c = Controller()
-    c = Controller(test_modules=[tiltSwitch()])
+    c = Controller()
     c.start()
-
+    t = tiltSwitch()
+    t.start()
 
 class tiltSwitch(object):
     def __init__(self):
