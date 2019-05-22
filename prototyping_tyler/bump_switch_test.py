@@ -1,14 +1,15 @@
-import piplates.Motorplate as motor
+import piplates.MOTORplate as motor
 import time
 
 isActivated = False
 
-while (flag):
+while (isActivated == False):
     time.sleep(0.1)
-    stat = MOTOR.getSENSORS(0)
-    if (stat & 0x2):
+    stat = MOTOR.getSENSORS(1)
+    if (stat & 7x1):
         isActivated = True
 
 
-if isActivated == True:
+while (isActivated == True):
     print ("bump switch activated!")
+    isActivated = False
