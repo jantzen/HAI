@@ -1,4 +1,4 @@
-import piplates.Motorplate as motor
+import piplates.MOTORplate as motor
 import time
 
 flag = False
