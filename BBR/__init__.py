@@ -1,1 +1,2 @@
-from BBR.modules.sensors import *
+from BBR.nodes.sensors import *
+from BBR.nodes.actuators import *
