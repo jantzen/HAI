@@ -9,10 +9,10 @@ class Motor( DCmotors.Motor ):
             self._address = address
         else:
             raise ValueError('address must be 0 or 1')
-        if number in [1,2,3]:
+        if number in [1,2,3,4]:
             self._number = number
         else:
-            raise ValueError('number must be 1, 2, or 3')
+            raise ValueError('number must be 1, 2, 3, or 4')
         if forward_direction in ['cw','ccw'] and reverse_direction in ['cw','ccw']:
             self._forward = forward_direction
             self._reverse = reverse_direction
