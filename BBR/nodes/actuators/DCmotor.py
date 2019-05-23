@@ -4,9 +4,14 @@
 class Motor( object ):
     """Generic class describing DC motors.
     """
+    # ATTRIBUTES
+    self.__efferents = None
 
-    def __init__(self):
-        pass
+
+    # METHODS
+
+    def __init__(self, efferents):
+        self.__efferents
 
     def config(self):
         pass
@@ -28,6 +33,10 @@ class Motor( object ):
 
     def reverse(self):
         pass
+
+    def run():
+        pass
+
 
 class MotorCluster( object ):
     """Coordinated collections of motor objects.
