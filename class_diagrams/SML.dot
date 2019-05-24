@@ -12,45 +12,91 @@ edge [
 arrowtail = "empty"
 ]
 
-SensorimotorModule [
-label = "{SensorimotorModule|- afferent_sockets : list of multiprocessing.Queue objects\l- efferent_sockets : list of multiprocessing.Queue objects\l|+ start()\l}"
+SensorimotorNodes [
+label = "{SensorimotorNode|\l|+run()\ +read() l}"
 ]
 
 Sensor [
-label = "{Sensor|\l|+ go_right()\l +go_left()\1 +go_forward()\1 +go_reverse()\1}"
+label = "{Sensor| +isActivated = False\+afferentNodes\ |\l}"
 ]
 
 Actuator [
-label = "{Actuator|\l|+ right()\l +left()\1 +forward()\1 +reverse()\1}"
+label = "{Actuator|\+efferentNodes|\l}"
 ]
 
 Internode [
-label = "{Internode|\l|\l}"
+label = "{Internode|+afferentNodes\+efferentNodes |\l}"
 ]
 
-SensorimotorModule -> Sensor [dir=back]
-SensorimotorModule -> Actuator [dir=back]
-SensorimotorModule -> Internode [dir=back]
+SensorimotorNode -> Sensor [dir=back]
+SensorimotorNode -> Actuator [dir=back]
+SensorimotorNode -> Internode [dir=back]
 
-Camera [ label = "{Camera|-intensity_left : int \1 -intensity_center : int\1 -intensity_right : int| \1}"
+Balance [
 ]
 
-Tilt [ label = "{Tilt| -accel_x : int \1 -accel_y : int\1|\1}"
+Collide [
 ]
 
-Contact [ label = "{Contact | -is_activated : Bool \1|\1}"
+Avoid [
 ]
 
-Sensor -> Camera [dir=back]
-Sensor -> Tilt [dir=back]
-Sensor -> Contact [dir=back]
+Pursue[
+]
+
+Wander[
+
+]
+
+Internode -> Collide [dir=back]
+Internode -> Balance [dir=back]
+Internode -> Avoid [dir=back]
+Internode -> Pursue [dir=back]
+Internode -> Wander [dir=back]
 
 DCmotor [
 ]
 
-DCwheel [
-]
 
 Actuator -> DCmotor [dir=back]
-DCmotor -> DCwheel [dir=back]
 
+Contact [
+label = "{Bump|\l}"
+]
+
+Tilt [
+label = "{Tilt|\l}"
+]
+
+Camera [
+label = "{Camera|\l}"
+
+Sensor -> Contact [dir=back]
+Sensor -> Tilt [dir=back]
+Sensor -> Camera [dir=back]
+
+
+Whisker [
+label = "{Whisker|\l}"
+]
+
+Whisker -> Contact [dir=back]
+
+DAQC_Whisker [
+label = "{DAQC_Whisker|\l}"
+]
+
+ArdLSM303 [
+label = "{ArdLSM303|\l}"
+]
+
+raspPiCamera [
+label = "{rasPiCamera|\l}"
+]
+
+Whisker -> DAQC_Whisker [dir=back]
+Tilt -> ArdLSM303 [dir = back]
+Camera -> raspPiCamera [dir = back]
+
+
+}
