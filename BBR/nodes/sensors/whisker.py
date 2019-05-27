@@ -1,8 +1,6 @@
-#import BumpNode
-import time
+from BBR.nodes.sensors.sensor import Sensor
 
-
-class Whisker(sensor):
+class Whisker( Sensor ):
     """Generic class describing Whisker bump sensors"""
 
 

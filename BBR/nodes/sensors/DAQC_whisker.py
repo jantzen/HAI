@@ -1,4 +1,5 @@
 import piplates.DAQCplate as DAQC
+import time
 
 class DAQC_Whisker(Whisker):
     

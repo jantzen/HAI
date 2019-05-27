@@ -1,10 +1,13 @@
-import DCmotors
-import piplates.MOTORplate as MOTOR
+from BBR.nodes.actuators.DCmotor import *
+import piplates.MOTORplate as MP
 
-class Motor( DCmotors.Motor ):    
+class MPMotor( Motor ):    
     
-    def __init__(self, address, number, forward_direction, reverse_direction, 
+    def __init__(self, afferents, address, number, forward_direction, reverse_direction, 
             acceleration=0.1):
+
+        Motor.__init__(self, afferents=afferents)
+
         if address in [0,1]:
             self._address = address
         else:
@@ -28,3 +31,41 @@ class Motor( DCmotors.Motor ):
         self.speed = 0
         self._stopped = True
 
+    def start(self):
+        pass
+
+    def run():
+        pass
+
+
+class RuntRoverSide( MotorCluster ):
+    """Provides a simple interface for controlling the three motors on one side
+    of the Runt Rover chassis.
+    """
+
+    def __init__(self, afferents, addresses, forward_directions,
+            reverse_directions, motor_list):
+        Motor.__init__(self, afferents)
+        self._motor_list = motor_list
+        self._address = addresses # board address for each motor
+        self._forward_directions = forward_directions
+        self._reverse_directions = reverse_directions
+
+        # set up the motor objects
+        self._motors = []
+        for ii, motorid in motor_list:
+            self._motors.append(MPmotor(None, self._addresses[ii],
+                ii, self._forward_directions[ii], self.reverse_directions[ii]))
+
+    def increase(self, increment=10):
+        pass
+
+    def decrease(self, increment=10):
+        pass
+
+
+    def run():
+        pass
+
+class RuntRover( MotorSystem ):
+    pass
