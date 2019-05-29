@@ -1,5 +1,6 @@
 from BBR.nodes.sensors.sensor import Sensor
 import sys
+import time
 
 class Whisker( Sensor ):
     """Generic class describing Whisker bump sensors"""
@@ -34,7 +35,7 @@ class Whisker( Sensor ):
                 touch = self.read()
                 if touch:
                     self.fire()
-                time.sleep(self.delay)
+                time.sleep(self._delay)
 
             except:
                 self.cleanup()
