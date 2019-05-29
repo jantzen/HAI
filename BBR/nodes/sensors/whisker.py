@@ -1,40 +1,42 @@
 from BBR.nodes.sensors.sensor import Sensor
+import sys
 
 class Whisker( Sensor ):
     """Generic class describing Whisker bump sensors"""
 
 
-    def __init__(self, afferents, isActived = False, signal):
-        self._afferents = [BumpNode,]
-        self._isActivated = False
-        #defult signal strength of board
-        self._voltageSignal = signal
+    def __init__(self, efferents, delay=0.1):
+        Sensor.__init__(self, efferents)
+        self._delay = delay
         
 
     def read(self):
-        #while True:
-            while(self._isActivated == False):
-                time.sleep(0.1)
-                
-                #if signal strength changes then interrupt current process and move to interrupt handler
-                if(signal > signal):
-                    self._isActivated = True
-            
-            if(self._isActivated = True):
-                #send off info to BumpNode
-                
-    
+        """Returns 1 if whisker has been touched since last poll, and 0
+        otherwise.
+        """
+        pass
+               
 
-    def run():
-       self.read()
-       self.emergency_stop()
-          
+    def fire(self):
+        # send message out efferents
+        print("bump detected") #DEBUGGING
+        for eff in self._efferents:
+            eff.put(1)
 
-    def emergency_stop(self):
-        
-        try:
-            self.run()
 
-        except (KeyboardInterrupt, SystemExit):
-            cleanup_stop_thread()
-            sys.exit()
+    def cleanup(self):
+        pass
+
+
+    def run(self):
+        while True:
+            try:
+                touch = self.read()
+                if touch:
+                    self.fire()
+                time.sleep(self.delay)
+
+            except:
+                self.cleanup()
+                sys.exit()
+
