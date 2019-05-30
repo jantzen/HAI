@@ -15,7 +15,7 @@ class DAQC_Whisker( Whisker ):
 
     def read(self):
         tmp = DAQC.getINTflags(self._brd_addr)
-        if (self._DINbit & tmp):
+        if ((2 ** self._DINbit) & tmp):
             return 1
         else:
             return 0

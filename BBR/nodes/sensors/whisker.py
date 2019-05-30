@@ -39,5 +39,6 @@ class Whisker( Sensor ):
 
             except:
                 self.cleanup()
-                sys.exit()
+                break
 
+        sys.exit(0)

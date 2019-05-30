@@ -19,7 +19,7 @@ class test():
         except KeyboardInterrupt:
             print("  exiting loop")
         except Exception:
-            print("terminating")
+            print("  terminating")
         sys.exit(0)
 
 
@@ -29,13 +29,15 @@ def main():
     p = mp.Process(target=t.func)
     try:
         p.start()
-        time.sleep(1.5)
+        time.sleep(3.)
         p.terminate()
         p.join()
     except:
         print("ended in exception")
-    print(q.qsize())
-    print(q.get())
+    qsize = q.qsize()
+    print("Queue size: {}".format(qsize))
+    for item in range(qsize):
+        print(q.get())
 
 
 if __name__ == '__main__':
