@@ -2,25 +2,19 @@ from BBR.nodes.sensors.sensor import Sensor
 import sys
 import time
 
-class Whisker( Sensor ):
-    """Generic class describing Whisker bump sensors"""
+class Tilt ( Sensor ):
+    """Generic class describing tilt sensors"""
 
-
-    def __init__(self, efferents, delay=0.1):
+    def __init__(self,efferents, delay=0.1):
         Sensor.__init__(self, efferents)
         self._delay = delay
-        
 
     def read(self):
-        """Returns 1 if whisker has been touched since last poll, and 0
-        otherwise.
-        """
+        """Returns 1 if tilted too far, 0 otherwise"""
         pass
-               
-    
+
     def fire(self):
-        # send message out efferents
-        print("bump detected") #DEBUGGING
+        print ("tilt detected")
         for eff in self._efferents:
             eff.put(1)
 
@@ -32,8 +26,8 @@ class Whisker( Sensor ):
     def run(self):
         while True:
             try:
-                touch = self.read()
-                if touch:
+                tilted = self.read()
+                if tilted:
                     self.fire()
                 time.sleep(self._delay)
 
