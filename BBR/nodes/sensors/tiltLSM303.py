@@ -24,7 +24,7 @@ class Tilt_LSM303( Tilt ):
         accel = (accel [0] >> 4, accel [1] >> 4, accel [2] >>4)
 
         
-        if(accel[0] < -175 or accel[0] > 350 or accel[1]>475 or accel[1] ):
+        if(accel[0] < -175 or accel[0] > 350 or accel[1]>475 or accel[1] < -550 ):
             return 1
         else:
             return 0

@@ -11,6 +11,9 @@ class Bump ( Internode ):
         BackBump = Sensor.__init__(self, efferents)
         FrontBump = Sensor.__init__(self,efferents)
         
+    def read(self):
+        pass
+
     def run(self):
         while True:
             try:
@@ -63,3 +66,4 @@ class Bump ( Internode ):
 
             sys.exit(0)
             pass
+        
