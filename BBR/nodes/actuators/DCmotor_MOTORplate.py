@@ -1,6 +1,7 @@
 from BBR.nodes.actuators.DCmotor import *
 import piplates.MOTORplate as MOTORplate
 import multiprocessing 
+import time
 
 class MPMotor( Motor ):    
     
@@ -16,8 +17,7 @@ class MPMotor( Motor ):
             self._reverse = reverse_direction
         else:
             raise ValueError('drections must be "cw" or "ccw"')
-        if 0 <= min_run_speed <= 100 and 0 <= max_run_speed <= 100 and
-        min_run_speed < max_run_speed:
+        if 0 <= min_run_speed <= 100 and 0 <= max_run_speed <= 100 and min_run_speed < max_run_speed:
             self._min_run_speed = min_run_speed
             self._max_run_speed = max_run_speed
         else:
@@ -135,8 +135,7 @@ class RuntRoverSide( MotorCluster ):
         if not (len(addresses) == len(forward_directions) and 
                 len(forward_directions) == len(reverse_directions) and 
                 len(reverse_directions) == len(motor_list)):
-            raise ValueError('must provide addresses and directions for each motor
-            in motor_list')
+            raise ValueError('must provide addresses and directions for each motor in motor_list')
         MotorCluster.__init__(self, afferents)
         self._motor_list = motor_list
         self._address = addresses # board address for each motor
