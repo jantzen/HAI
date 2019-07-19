@@ -1,0 +1,102 @@
+digraph SensorimotorModules {
+fontname = "Bitstream Vera Sans"
+fontsize = 8
+
+node [
+fontname = "Bitstream Vera Sans"
+fontsize = 8
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+
+SensorimotorNodes [
+label = "{SensorimotorNode|\l|+run()\ +read() l}"
+]
+
+Sensor [
+label = "{Sensor| +isActivated = False\+afferentNodes\ |\l}"
+]
+
+Actuator [
+label = "{Actuator|\+efferentNodes|\l}"
+]
+
+Internode [
+label = "{Internode|+afferentNodes\+efferentNodes |\l}"
+]
+
+SensorimotorNode -> Sensor [dir=back]
+SensorimotorNode -> Actuator [dir=back]
+SensorimotorNode -> Internode [dir=back]
+
+Balance [
+]
+
+Collide [
+]
+
+Avoid [
+]
+
+Pursue[
+]
+
+Wander[
+
+]
+
+Internode -> Collide [dir=back]
+Internode -> Balance [dir=back]
+Internode -> Avoid [dir=back]
+Internode -> Pursue [dir=back]
+Internode -> Wander [dir=back]
+
+DCmotor [
+]
+
+
+Actuator -> DCmotor [dir=back]
+
+Contact [
+label = "{Bump|\l}"
+]
+
+Tilt [
+label = "{Tilt|\l}"
+]
+
+Camera [
+label = "{Camera|\l}"
+
+Sensor -> Contact [dir=back]
+Sensor -> Tilt [dir=back]
+Sensor -> Camera [dir=back]
+
+
+Whisker [
+label = "{Whisker|\l}"
+]
+
+Whisker -> Contact [dir=back]
+
+DAQC_Whisker [
+label = "{DAQC_Whisker|\l}"
+]
+
+ArdLSM303 [
+label = "{ArdLSM303|\l}"
+]
+
+raspPiCamera [
+label = "{rasPiCamera|\l}"
+]
+
+Whisker -> DAQC_Whisker [dir=back]
+Tilt -> ArdLSM303 [dir = back]
+Camera -> raspPiCamera [dir = back]
+
+
+}

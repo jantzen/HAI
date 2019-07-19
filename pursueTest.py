@@ -1,29 +1,26 @@
 import videoTest
 from bot import Bot
-import numpy as np
-import cv2
-import picamera
-import picamera.array
-
-bot = Bot()
 
 
+greyscale = cv2.cvtColor(frame.array, cv2.COLOR_BGR2GRAY)
+
+mask_right = np.zeros(frame.array.shape, dtype="uint8")
+mask_center = np.zeros(frame.array.shape, dtype="uint8")
+mask_left = np.zeros(frame.array.shape, dtype="uint8")
+
+cv2.rectangle(mask_right, 
+cv2.rectangle(mask_center,
+cv2.rectangle(mask_left,
+
+masked_right = cv2.bitwise_and(frame.array, frame.array, mask = mask_right)
+masked_center = cv2.bitwise_and(frame.array, frame.array, mask = mask_center)
+masked_left = cv2.bitwise_and(frame.array, frame.array, mask = mask_left)
 
 
 
- 
+hist_right = cv2.calcHist([masked],[0],mask_right,[256],[0,256])
+hist_center = cv2.calcHist([masked],[0],mask_center,[256],[0,256])
+hist_left = cv2.calcHist([masked],[0],mask_left,[256],[0,256])
 
 
-
-#blueX will point to the aggregate of blue x values that are extracted from bluePixels. Instead of being an array it will just be an integer.
-#blueX =
-
-#if : #color array output from each frame of video capture == hsv_blue || the value of blueX is 0
-    #bot.move()
-
-    #elif: #the value of blueX is positive
-    #bot.movingTurn(right)
-
-    #elif: #the value of blueX is negative
-    #bot.movingTurn(left)
-    
+cv2.imshow("Gray image", gray)

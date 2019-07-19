@@ -86,13 +86,15 @@ class Bot:
         self.right.moveAll(spd, True)
         self.left.moveAll(spd, True)
 
-    def backTurn(self, dir, spd):
+    def backTurn(self, dir, back = True, spd):
         #turn while moving backwards
         if dir == 'right':
-            self.right.moveAll(spd-20)
+            self.right.moveAll(spd-20, True)
+            self.left.stopAll()
 
         if dir == 'left':
-            self.right.moveAll(spd-20)
+            self.left.moveAll(spd-20, True)
+            self.right.stopAll()
 
 
     def movingTurn(self, dir, spd):
