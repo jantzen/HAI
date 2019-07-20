@@ -1,7 +1,8 @@
 """Contains the template classes for describing DC motor actuators.
 """
 from BBR.nodes.actuators.actuator import *
-import queue
+import sys
+import Queue
 
 class Motor( Actuator ):
     """Generic class describing DC motors.
@@ -39,13 +40,15 @@ class Motor( Actuator ):
                     self.forward()
                 elif cmd == 'r':
                     self.reverse()
-            except queue.Empty:
+                elif cmd == 'q':
+                    self.cleanup()
+                    break
+            except Queue.Empty:
                 continue
-            except:
-                self.cleanup()
-                break
 
         sys.exit(0)
+
+    def cleanup(self):
         pass
 
 
@@ -58,6 +61,10 @@ class MotorCluster( Actuator ):
         """
         Actuator.__init__(self, afferents)
         self._motor_list = motor_list
+
+
+    def cleanup(self):
+        pass
 
 
 class MotorSystem( Actuator ):
@@ -76,4 +83,5 @@ class MotorSystem( Actuator ):
     def right(self):
         pass
 
-
+    def cleanup(self):
+        pass

@@ -2,6 +2,8 @@ from BBR.nodes.actuators.DCmotor import *
 import piplates.MOTORplate as MOTORplate
 import multiprocessing 
 import time
+import Queue # piplates requires Python 2.7
+import pdb
 
 class MPMotor( Motor ):    
     
@@ -11,7 +13,10 @@ class MPMotor( Motor ):
         Motor.__init__(self, afferents=afferents)
 
         self._address = address
-        self._number = number
+        if number in [1, 2, 3, 4]:
+            self._number = number
+        else:
+            raise ValueError('motor number must be 1 - 4')
         if forward_direction in ['cw','ccw'] and reverse_direction in ['cw','ccw']:
             self._forward = forward_direction
             self._reverse = reverse_direction
@@ -41,7 +46,7 @@ class MPMotor( Motor ):
  
 
     def start(self):
-        print("Starting motor {} at speed 0.".format(self._number))
+        print("Starting motor {} at speed {}.".format(self._number, self.speed))
         MOTORplate.dcSTART(self._address, self._number)
         self._stopped = False
 
@@ -61,13 +66,13 @@ class MPMotor( Motor ):
             self._stopped = False
         tmp = self.speed + self._increment
         if tmp >= 0 and self.direction == self._forward:
-            new_speed = min([100, tmp])
+            new_speed = min([self._max_run_speed, tmp])
             MOTORplate.dcSPEED(self._address, self._number, new_speed)
             time.sleep(self._acceleration)
             self.speed = new_speed
         if tmp >= 0 and self.direction == self._reverse:
             self.direction = self._forward
-            new_speed = min([100, tmp])
+            new_speed = min([self._max_run_speed, tmp])
             MOTORplate.dcSTOP(self._address, self._number)
             time.sleep(self._acceleration)
             MOTORplate.dcCONFIG(self._address, self._number, self.direction, new_speed, self._acceleration)
@@ -76,7 +81,7 @@ class MPMotor( Motor ):
             self.speed = new_speed
         if tmp < 0 and self.direction == self._forward:
             self.direction = self._reverse
-            new_speed = min([100, abs(tmp)])
+            new_speed = min([self._max_run_speed, abs(tmp)])
             MOTORplate.dcSTOP(self._address, self._number)
             time.sleep(self._acceleration)
             MOTORplate.dcCONFIG(self._address, self._number, self.direction, new_speed, self._acceleration)
@@ -84,7 +89,7 @@ class MPMotor( Motor ):
             time.sleep(self._acceleration)
             self.speed = -new_speed
         if tmp < 0 and self.direction == self._reverse:
-            new_speed = min([100, abs(tmp)])
+            new_speed = min([self._max_run_speed, abs(tmp)])
             MOTORplate.dcSPEED(self._address, self._number, new_speed)
             time.sleep(self._acceleration)
             self.speed = -new_speed
@@ -96,13 +101,13 @@ class MPMotor( Motor ):
             self._stopped = False
         tmp = self.speed - self._increment
         if tmp >= 0 and self.direction == self._forward:
-            new_speed = min([100, tmp])
+            new_speed = min([self._max_run_speed, tmp])
             MOTORplate.dcSPEED(self._address, self._number, new_speed)
             time.sleep(self._acceleration)
             self.speed = new_speed
         if tmp >= 0 and self.direction == self._reverse:
             self.direction = self._forward
-            new_speed = min([100, tmp])
+            new_speed = min([self._max_run_speed, tmp])
             MOTORplate.dcSTOP(self._address, self._number)
             time.sleep(self._acceleration)
             MOTORplate.dcCONFIG(self._address, self._number, self.direction, new_speed, self._acceleration)
@@ -111,7 +116,7 @@ class MPMotor( Motor ):
             self.speed = new_speed
         if tmp < 0 and self.direction == self._forward:
             self.direction = self._reverse
-            new_speed = min([100, abs(tmp)])
+            new_speed = min([self._max_run_speed, abs(tmp)])
             MOTORplate.dcSTOP(self._address, self._number)
             time.sleep(self._acceleration)
             MOTORplate.dcCONFIG(self._address, self._number, self.direction, new_speed, self._acceleration)
@@ -119,7 +124,7 @@ class MPMotor( Motor ):
             time.sleep(self._acceleration)
             self.speed = -new_speed
         if tmp < 0 and self.direction == self._reverse:
-            new_speed = min([100, abs(tmp)])
+            new_speed = min([self._max_run_speed, abs(tmp)])
             MOTORplate.dcSPEED(self._address, self._number, new_speed)
             time.sleep(self._acceleration)
             self.speed = -new_speed
@@ -136,9 +141,9 @@ class RuntRoverSide( MotorCluster ):
                 len(forward_directions) == len(reverse_directions) and 
                 len(reverse_directions) == len(motor_list)):
             raise ValueError('must provide addresses and directions for each motor in motor_list')
-        MotorCluster.__init__(self, afferents)
+        MotorCluster.__init__(self, afferents, motor_list)
         self._motor_list = motor_list
-        self._address = addresses # board address for each motor
+        self._addresses = addresses # board address for each motor
         self._forward_directions = forward_directions
         self._reverse_directions = reverse_directions
         self._min_run_speed = min_run_speed
@@ -149,13 +154,13 @@ class RuntRoverSide( MotorCluster ):
         # set up queues for motor objects
         motor_queues = []
         for m in motor_list:
-            motor_queues.append(multiprocessing.Queue(max_size=1))
+            motor_queues.append(multiprocessing.Queue(maxsize=1))
 
         # set up the motor objects
         self._motors = []
-        for ii, motorid in motor_list:
-            self._motors.append(MPmotor([motor_queues[ii]], self._addresses[ii],
-                ii, self._forward_directions[ii], self.reverse_directions[ii],
+        for ii, motorid in enumerate(motor_list):
+            self._motors.append(MPMotor([motor_queues[ii]], self._addresses[ii],
+                motorid, self._forward_directions[ii], self._reverse_directions[ii],
                 self._min_run_speed, self._max_run_speed, self._increment,
                 self._acceleration))
 
@@ -166,18 +171,41 @@ class RuntRoverSide( MotorCluster ):
 
 
     def stop(self):
-        for q in self._motors:
-            q.put('s')
+        for m in self._motors:
+            m._afferents[0].put('s')
 
 
     def forward(self):
-        for q in self._motors:
-            q.put('f')
+        for m in self._motors:
+            m._afferents[0].put('f')
 
 
     def reverse(self):
-        for q in self._motors:
-            q.put('r')
+        for m in self._motors:
+            m._afferents[0].put('r')
+
+
+    def run(self):
+        while True:
+            try:
+                cmd = None
+                for aff in self._afferents:
+                    if not aff.empty():
+                        cmd = aff.get()
+                        print("command received")
+                        break
+                if cmd == 's':
+                    self.stop()
+                elif cmd == 'f':
+                    self.forward()
+                elif cmd == 'r':
+                    self.reverse()
+            except Queue.Empty:
+                print("queue empty")
+                continue
+
+        sys.exit(0)
+ 
 
 
 class RuntRover( MotorSystem ):

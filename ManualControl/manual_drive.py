@@ -7,24 +7,13 @@ import termios
 import piplates.MOTORplate as MOTOR
 import RPi.GPIO as GPIO
 import time
-import pdb
+#import pdb
 from multiprocessing import Process
-import Adafruit_LSM303
 
 
 
 dummy0=MOTOR.getINTflag1(0)  #flush out any old interrupts
 dummy1=MOTOR.getINTflag1(1)  #flush out any old interrupts
-#intFLAG=0
-#intBITS0=0
-#intBITS1=0
-
-#def moveDone(channel):
-#        global intBITS0, intBITS1, intFLAG
-#        print("motor at steady state")
-#        intBITS0=MOTOR.getINTflag1(0)            #get flags
-#        intBITS1=MOTOR.getINTflag1(1)            #get flags
-#        intFLAG=1       #signal main program that an interrupt occurred
 
 
 class Motor(object):
@@ -52,15 +41,6 @@ class Motor(object):
         self.direction = self._forward
         self.speed = 0
         self._stopped = True
-
-        # set up interrupts
-#        MOTOR.enabledcSTEADYint(self._address, self._number)
-#        MOTOR.enabledcSTOPint(self._address, self._number)
-
-        # assign test bits
-#        self._testbit = 32 * 2**(5 - self._number)
-
-        
 
 
 class RuntRover(object):
@@ -406,35 +386,9 @@ class Controller(object):
 
 
 def main():
-    #threading/queue goes here
-#    c = Controller()
     c = Controller()
     c.start()
-    t = tiltSwitch()
-    t.start()
 
-class tiltSwitch(object):
-    def __init__(self):
-        self._lsm303 = Adafruit_LSM303.LSM303()
-        self._robot = RuntRover()
-    
-    def execute():
-
-        while (True):
-            accel = self._lsm303.read()
-            accel_x, accel_y, accel_z = accel
-
-                #if(accel_x > ?):
-                #self._robot.stop()
-        
-            if (accel_x < -650):
-                print("backing up")
-        
-            if (accel_y < -550):
-                print("left tilt")
-        
-            if (accel_y > 475):
-                print("right tilt")
 
 def monitor():
     from picamera.array import PiRGBArray
@@ -443,10 +397,8 @@ def monitor():
     import cv2
     
     camera = PiCamera()
-#    camera.resolution = (640, 480)
     camera.resolution = (320, 240)
     camera.framerate = 32
-#    rawCapture = PiRGBArray(camera, size=(640, 480))
     rawCapture = PiRGBArray(camera, size=(320, 240))
     
     
@@ -468,9 +420,7 @@ if __name__=='__main__':
                 video = True
         if video:
             mon_proc = Process(target = monitor)
-#            main_proc = Process(target = main)
             mon_proc.start()
-#            main_proc.start()
             main()
         else:
             main()
