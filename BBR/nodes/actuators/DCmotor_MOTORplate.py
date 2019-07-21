@@ -135,54 +135,41 @@ class RuntRoverSide( MotorCluster ):
     of the Runt Rover chassis.
     """
 
-    def __init__(self, afferents, addresses, forward_directions,
-            reverse_directions, motor_list, min_run_speed=20, max_run_speed=90, increment=5, acceleration=0.1):
-        if not (len(addresses) == len(forward_directions) and 
-                len(forward_directions) == len(reverse_directions) and 
-                len(reverse_directions) == len(motor_list)):
-            raise ValueError('must provide addresses and directions for each motor in motor_list')
-        MotorCluster.__init__(self, afferents, motor_list)
-        self._motor_list = motor_list
-        self._addresses = addresses # board address for each motor
-        self._forward_directions = forward_directions
-        self._reverse_directions = reverse_directions
-        self._min_run_speed = min_run_speed
-        self._max_run_speed = max_run_speed
-        self._increment = increment
-        self._acceleration = acceleration
-
-        # set up queues for motor objects
-        motor_queues = []
-        for m in motor_list:
-            motor_queues.append(multiprocessing.Queue(maxsize=1))
-
-        # set up the motor objects
-        self._motors = []
-        for ii, motorid in enumerate(motor_list):
-            self._motors.append(MPMotor([motor_queues[ii]], self._addresses[ii],
-                motorid, self._forward_directions[ii], self._reverse_directions[ii],
-                self._min_run_speed, self._max_run_speed, self._increment,
-                self._acceleration))
+    def __init__(self, afferents, motor_queues):
+        if not (type(motor_queues) is list):
+            raise ValueError('must provide a list of lists of motor_queues')
+        MotorCluster.__init__(self, afferents)
+        self._motor_queues = motor_queues
 
 
     def start(self):
-        for m in self._motors:
-            m.start()
+        for m in self._motor_queues:
+            m.put('a')
+            time.sleep(0.1)
 
 
     def stop(self):
-        for m in self._motors:
-            m._afferents[0].put('s')
+        for m in self._motor_queues:
+            m.put('s')
+            time.sleep(0.1)
 
 
     def forward(self):
-        for m in self._motors:
-            m._afferents[0].put('f')
+        for m in self._motor_queues:
+            m.put('f')
+            time.sleep(0.1)
 
 
     def reverse(self):
-        for m in self._motors:
-            m._afferents[0].put('r')
+        for m in self._motor_queues:
+            m.put('r')
+            time.sleep(0.1)
+
+
+    def quit(self):
+        for m in self._motor_queues:
+            m.put('q')
+            time.sleep(0.1)
 
 
     def run(self):
@@ -192,14 +179,18 @@ class RuntRoverSide( MotorCluster ):
                 for aff in self._afferents:
                     if not aff.empty():
                         cmd = aff.get()
-                        print("command received")
                         break
-                if cmd == 's':
+                if cmd == 'a':
+                    self.start()
+                elif cmd == 's':
                     self.stop()
                 elif cmd == 'f':
                     self.forward()
                 elif cmd == 'r':
                     self.reverse()
+                elif cmd == 'q':
+                    self.quit()
+                    break
             except Queue.Empty:
                 print("queue empty")
                 continue

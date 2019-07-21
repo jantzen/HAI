@@ -34,7 +34,9 @@ class Motor( Actuator ):
                     if not aff.empty():
                         cmd = aff.get()
                         break
-                if cmd == 's':
+                if cmd == 'a':
+                    self.start()
+                elif cmd == 's':
                     self.stop()
                 elif cmd == 'f':
                     self.forward()
@@ -55,12 +57,11 @@ class Motor( Actuator ):
 class MotorCluster( Actuator ):
     """Coordinated collections of motor objects.
     """
-    def __init__(self, afferents, motor_list):
-        """ afferents
-            motor_list - list of motor ID numbers belonging to the cluster
+    def __init__(self, afferents):
+        """ afferents - a list of list of afferents, one list for each motor 
+        belonging to the cluseter
         """
         Actuator.__init__(self, afferents)
-        self._motor_list = motor_list
 
 
     def cleanup(self):
