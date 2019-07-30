@@ -2,8 +2,7 @@ from BBR.nodes.actuators.DCmotor import *
 import piplates.MOTORplate as MOTORplate
 import multiprocessing 
 import time
-import Queue # piplates requires Python 2.7
-import pdb
+import queue # piplates requires Python 2.7
 
 class MPMotor( Motor ):    
     
@@ -191,7 +190,7 @@ class RuntRoverSide( MotorCluster ):
                 elif cmd == 'q':
                     self.quit()
                     break
-            except Queue.Empty:
+            except queue.Empty:
                 print("queue empty")
                 continue
 

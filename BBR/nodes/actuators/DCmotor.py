@@ -2,7 +2,7 @@
 """
 from BBR.nodes.actuators.actuator import *
 import sys
-import Queue
+import queue
 
 class Motor( Actuator ):
     """Generic class describing DC motors.
@@ -45,7 +45,7 @@ class Motor( Actuator ):
                 elif cmd == 'q':
                     self.cleanup()
                     break
-            except Queue.Empty:
+            except queue.Empty:
                 continue
 
         sys.exit(0)

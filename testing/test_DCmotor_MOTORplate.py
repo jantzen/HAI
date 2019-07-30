@@ -1,5 +1,6 @@
 from BBR.nodes.actuators.DCmotor_MOTORplate import *
 import multiprocessing as mp
+import queue
 import time
 
 def test_MPMotor(address=0, number=1, forward_direction='cw', reverse_direction='ccw'):
