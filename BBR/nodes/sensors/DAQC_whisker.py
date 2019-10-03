@@ -13,6 +13,9 @@ class DAQC_Whisker( Whisker ):
         DAQC.enableDINint(self._brd_addr, self._DINbit, self._edge) 
          
 
+    def clear(self):
+        DAQC.getINTflags(self._brd_addr)
+
     def read(self):
         tmp = DAQC.getINTflags(self._brd_addr)
         if ((2 ** self._DINbit) & tmp):

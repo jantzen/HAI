@@ -29,7 +29,12 @@ class Whisker( Sensor ):
         pass
 
 
+    def clear(self):
+        pass
+
+
     def run(self):
+        self.clear()
         while True:
             try:
                 touch = self.read()
