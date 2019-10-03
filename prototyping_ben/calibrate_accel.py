@@ -30,17 +30,18 @@ def gather_data(sensor, delta=5.):
     az = np.array(az).reshape(1,-1)
 
     # compute mean magnitude of acceleration in horizontal plane
-    mean_h = np.mean(np.sqrt(ax**2 + ay**2))
-    std_h = np.std(np.sqrt(ax**2 + ay**2))
+    mean_h = np.sqrt(np.mean(ax)**2 + np.mean(ay)**2)
+#    std_h = np.std(np.sqrt(ax**2 + ay**2))
 
     # compute mean magnitude of vertical acceleration
-    mean_v = np.mean(np.sqrt(az**2))
-    std_v = np.std(np.sqrt(az**2))
+    mean_v = np.sqrt(np.mean(az)**2)
+#    std_v = np.std(np.sqrt(az**2))
 
-    return mean_h, std_h, mean_v, std_v
+#    return mean_h, std_h, mean_v, std_v
+    return mean_h, mean_v
 
 def calibrate(sensor):
-    delta = 10
+    delta = 5
 
     try:
         # collect means and standard deviations of magnitudes of acceleration in the xy-plane
@@ -48,72 +49,77 @@ def calibrate(sensor):
         # steady forward motion at 50
         print("Steady forward motion at level 50.")
         input("Press Enter when ready.")
-        mean_h, std_h, mean_v, std_v = gather_data(sensor)
-        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
-        print("Recommended vertical threshold: {}".format(mean_v + std_v))
+        mean_h, mean_v = gather_data(sensor)
+#        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
+#        print("Recommended vertical threshold: {}".format(mean_v + std_v))
+        print("Recommended horizontal threshold: {}".format(mean_h))
+        print("Recommended vertical threshold: {}".format(mean_v))
 
-        # steady reverse motion at 50
-        print("Steady reverse motion at level 50.")
-        input("Press Enter when ready.")
-        mean_h, std_h, mean_v, std_v = gather_data(sensor)
-        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
-        print("Recommended vertical threshold: {}".format(mean_v + std_v))
+#        # steady reverse motion at 50
+#        print("Steady reverse motion at level 50.")
+#        input("Press Enter when ready.")
+#        mean_h, std_h, mean_v, std_v = gather_data(sensor)
+#        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
+#        print("Recommended vertical threshold: {}".format(mean_v + std_v))
 
         # rotate in place CW at 70
         print("Rotate in place CW at 70.")
         input("Press Enter when ready.")
-        mean_h, std_h, mean_v, std_v = gather_data(sensor)
-        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
-        print("Recommended vertical threshold: {}".format(mean_v + std_v))
+#        mean_h, std_h, mean_v, std_v = gather_data(sensor)
+        mean_h, mean_v = gather_data(sensor)
+#        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
+#        print("Recommended vertical threshold: {}".format(mean_v + std_v))
+        print("Recommended horizontal threshold: {}".format(mean_h))
+        print("Recommended vertical threshold: {}".format(mean_v))
 
-        # rotate in place CCW at 70
-        print("Rotate in place CCW at 70.")
-        input("Press Enter when ready.")
-        mean_h, std_h, mean_v, std_v = gather_data(sensor)
-        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
-        print("Recommended vertical threshold: {}".format(mean_v + std_v))
-
-        # forward collision at 30
-        print("Forward collision at 30.")
-        input("Press Enter when ready.")
-        mean_h, std_h, mean_v, std_v = gather_data(sensor)
-        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
-        print("Recommended vertical threshold: {}".format(mean_v + std_v))
-
-        # reverse collision at 30
-        print("Reverse collision at 30.")
-        input("Press Enter when ready.")
-        mean_h, std_h, mean_v, std_v = gather_data(sensor)
-        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
-        print("Recommended vertical threshold: {}".format(mean_v + std_v))
-
-        # right front oblique forward collision at 30
-        print("Right front oblique collision at 30.")
-        input("Press Enter when ready.")
-        mean_h, std_h, mean_v, std_v = gather_data(sensor)
-        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
-        print("Recommended vertical threshold: {}".format(mean_v + std_v))
-
-        # left front oblique forward collision at 30
-        print("Left front oblique collision at 30.")
-        input("Press Enter when ready.")
-        mean_h, std_h, mean_v, std_v = gather_data(sensor)
-        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
-        print("Recommended vertical threshold: {}".format(mean_v + std_v))
-
-        # right rear oblique forward collision at 30
-        print("Right rear oblique collision at 30.")
-        input("Press Enter when ready.")
-        mean_h, std_h, mean_v, std_v = gather_data(sensor)
-        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
-        print("Recommended vertical threshold: {}".format(mean_v + std_v))
-
-        # left rear oblique forward collision at 30
-        print("Left rear oblique collision at 30.")
-        input("Press Enter when ready.")
-        mean_h, std_h, mean_v, std_v = gather_data(sensor)
-        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
-        print("Recommended vertical threshold: {}".format(mean_v + std_v))
+#        # rotate in place CCW at 70
+#        print("Rotate in place CCW at 70.")
+#        input("Press Enter when ready.")
+#        mean_h, std_h, mean_v, std_v = gather_data(sensor)
+#        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
+#        print("Recommended vertical threshold: {}".format(mean_v + std_v))
+#
+#        # forward collision at 30
+#        print("Forward collision at 30.")
+#        input("Press Enter when ready.")
+#        mean_h, std_h, mean_v, std_v = gather_data(sensor)
+#        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
+#        print("Recommended vertical threshold: {}".format(mean_v + std_v))
+#
+#        # reverse collision at 30
+#        print("Reverse collision at 30.")
+#        input("Press Enter when ready.")
+#        mean_h, std_h, mean_v, std_v = gather_data(sensor)
+#        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
+#        print("Recommended vertical threshold: {}".format(mean_v + std_v))
+#
+#        # right front oblique forward collision at 30
+#        print("Right front oblique collision at 30.")
+#        input("Press Enter when ready.")
+#        mean_h, std_h, mean_v, std_v = gather_data(sensor)
+#        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
+#        print("Recommended vertical threshold: {}".format(mean_v + std_v))
+#
+#        # left front oblique forward collision at 30
+#        print("Left front oblique collision at 30.")
+#        input("Press Enter when ready.")
+#        mean_h, std_h, mean_v, std_v = gather_data(sensor)
+#        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
+#        print("Recommended vertical threshold: {}".format(mean_v + std_v))
+#
+#        # right rear oblique forward collision at 30
+#        print("Right rear oblique collision at 30.")
+#        input("Press Enter when ready.")
+#        mean_h, std_h, mean_v, std_v = gather_data(sensor)
+#        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
+#        print("Recommended vertical threshold: {}".format(mean_v + std_v))
+#
+#        # left rear oblique forward collision at 30
+#        print("Left rear oblique collision at 30.")
+#        input("Press Enter when ready.")
+#        mean_h, std_h, mean_v, std_v = gather_data(sensor)
+#        print("Recommended horizontal threshold: {}".format(mean_h + std_h))
+#        print("Recommended vertical threshold: {}".format(mean_v + std_v))
 
     except KeyboardInterrupt:
         print("Exiting")
