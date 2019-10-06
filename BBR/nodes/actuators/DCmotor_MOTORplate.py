@@ -134,10 +134,10 @@ class RuntRoverSide( MotorCluster ):
     of the Runt Rover chassis.
     """
 
-    def __init__(self, afferents, motor_queues):
+    def __init__(self, afferents, motor_queues, efferents=None):
         if not (type(motor_queues) is list):
             raise ValueError('must provide a list of lists of motor_queues')
-        MotorCluster.__init__(self, afferents)
+        MotorCluster.__init__(self, afferents, efferents)
         self._motor_queues = motor_queues
 
 
@@ -198,5 +198,5 @@ class RuntRoverSide( MotorCluster ):
  
 
 
-class RuntRover( MotorSystem ):
-    pass
+#class RuntRover( MotorSystem ):
+#    pass

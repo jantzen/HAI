@@ -12,7 +12,11 @@ def setup():
     sensor.data_rate = adafruit_mma8451.DATARATE_800HZ
     return sensor
 
-def detect_impact(sensor, delta=0.04, epsilon=0.005):
+def detect_impact(sensor, 
+        delta=0.05,
+        thresh_h=3.,
+        thresh_v=11.,
+        ):
     while True:
         t0 = time.time()
         ax = []
@@ -25,35 +29,38 @@ def detect_impact(sensor, delta=0.04, epsilon=0.005):
             az.append(ztmp)
             time.sleep(0.00125)
         ax = np.array(ax).reshape(1,-1)
+        mx = np.mean(ax)
         ay = np.array(ay).reshape(1,-1)
+        my = np.mean(ay)
         az = np.array(az).reshape(1,-1)
+        mz = np.mean(az)
 
         # compute mean magnitude of acceleration in horizontal plane
-        mean_h = np.mean(np.sqrt(ax**2 + ay**2))
-        std_h = np.std(np.sqrt(ax**2 + ay**2))
+        mean_h = np.sqrt(mx**2 + my**2)
 
         # compute mean magnitude of vertical acceleration
-        mean_v = np.mean(np.sqrt(az**2))
-        std_v = np.std(np.sqrt(az**2))
+        mean_v = np.sqrt(mz**2)
 
-        t1 = time.time()
-        ax = []
-        ay = []
-        az = []
-        while time.time() < t1 + epsilon:
-            xtmp, ytmp, ztmp = sensor.acceleration
-            ax.append(xtmp)
-            ay.append(ytmp)
-            az.append(ztmp)
-            time.sleep(0.00125)
-        ax = np.array(ax).reshape(1,-1)
-        ay = np.array(ay).reshape(1,-1)
-        az = np.array(az).reshape(1,-1)
-
-        if (np.max(np.sqrt(ax**2 + ay**2)) > mean_h + 5. * std_h or 
-                np.max(np.sqrt(az**2)) > mean_v + 5. * std_v):
-            print("Bump detected!")
-
+        if mean_h > thresh_h:
+            if mx > 0. and my > 0.:
+                print("Rear left bump detected.")
+                print(mean_h)
+                print(mx, my)
+            elif mx > 0. and my < 0.:
+                print("Rear right bump detected.")
+                print(mean_h)
+                print(mx, my)
+            elif mx < 0. and my > 0.:
+                print("Front left bump detected.")
+                print(mean_h)
+                print(mx, my)
+            elif mx < 0. and my < 0.:
+                print("Front right bump detected.")
+                print(mean_h)
+                print(mx, my)
+        if mean_v > thresh_v:
+            print("Vertical bump detected.")
+            print(mean_v)
 
 def main():
     try:

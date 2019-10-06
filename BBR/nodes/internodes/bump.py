@@ -3,12 +3,15 @@ import time
 
 class Bump ( Internode ):
     """Class describing bump module"""
-    def __init__(self,afferents = [], efferents = [], delay = 0.1):
-        Internode.__init__(self,afferents, efferents)
+    def __init__(self, afferents = [], efferents = [], polling_delay = 0.01):
+        Internode.__init__(self, afferents, efferents)
         
         
-    def read(self):
+    def read(self, sensor):
+        # read from sensor
+        # return a string indicating region of bump or None
         pass
+
 
     def fire(self):
          eff in LeftBump._efferents:

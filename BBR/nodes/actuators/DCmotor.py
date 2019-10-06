@@ -8,8 +8,8 @@ class Motor( Actuator ):
     """Generic class describing DC motors.
     """
 
-    def __init__(self, afferents):
-        Actuator.__init__(self, afferents=afferents)
+    def __init__(self, afferents, efferents=None):
+        Actuator.__init__(self, afferents, efferents)
 
     def config(self):
         pass
@@ -57,32 +57,32 @@ class Motor( Actuator ):
 class MotorCluster( Actuator ):
     """Coordinated collections of motor objects.
     """
-    def __init__(self, afferents):
+    def __init__(self, afferents, efferents=None):
         """ afferents - a list of list of afferents, one list for each motor 
         belonging to the cluseter
         """
-        Actuator.__init__(self, afferents)
+        Actuator.__init__(self, afferents, efferents)
 
 
     def cleanup(self):
         pass
 
 
-class MotorSystem( Actuator ):
-    """Coordinated collections of motor objects.
-    """
-    def __init__(self, afferents, cluster_list):
-        """ afferents
-            motor_list - list of motor ID numbers belonging to the cluster
-        """
-        Actuator.__init__(self, afferents)
-        self._cluster_list = cluster_list
-
-    def left(self):
-        pass
-
-    def right(self):
-        pass
-
-    def cleanup(self):
-        pass
+#class MotorSystem( Actuator ):
+#    """Coordinated collections of motor objects.
+#    """
+#    def __init__(self, afferents, cluster_list):
+#        """ afferents
+#            motor_list - list of motor ID numbers belonging to the cluster
+#        """
+#        Actuator.__init__(self, afferents)
+#        self._cluster_list = cluster_list
+#
+#    def left(self):
+#        pass
+#
+#    def right(self):
+#        pass
+#
+#    def cleanup(self):
+#        pass
