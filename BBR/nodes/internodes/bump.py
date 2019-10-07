@@ -2,6 +2,7 @@ from BBR.nodes.internodes.internodes import Internode
 import sys
 import time
 
+
 class Bump ( Internode ):
     """Class describing bump module
 
@@ -88,8 +89,11 @@ class Bump ( Internode ):
             except IndexError:
                 rc = None
             if not lc is None:
+                print("writing left")
                 self._efferents[0].put(lc)
+            time.sleep(self._pd)
             if not rc is None:
+                print("writing right")
                 self._efferents[1].put(rc)
             time.sleep(self._pd)
 
@@ -103,7 +107,7 @@ class Bump ( Internode ):
             try:
                 msg = self.read()
                 if msg is not None:
-                    cmds = msg_to_cmds(msg)
+                    cmds = self.msg_to_cmds(msg)
                     self.fire(cmds)
                 time.sleep(self._pd)
 
