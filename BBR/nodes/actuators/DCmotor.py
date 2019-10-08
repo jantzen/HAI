@@ -51,7 +51,7 @@ class Motor( Actuator ):
         sys.exit(0)
 
     def cleanup(self):
-        pass
+        self.stop()
 
 
 class MotorCluster( Actuator ):

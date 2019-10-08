@@ -1,29 +1,71 @@
-from BBR.nodes.sensors.DAQC_whisker import DAQC_Whisker
-from BBR.nodes.actuators.DCmotor_MOTORplate import RuntRoverSide
+# file: test_bump_internode.py
 from BBR.nodes.internodes.bump import Bump
 import multiprocessing as mp
-import time
 import queue
+import time
 
-class RR_Bump (Bump):
-    def __init__(self, afferents = [right_bump_queue, left_bump_queue, back_bump_queue, front_bump_queue], efferents = [left_motor_queue, right_motor_queue] ):
-        Bump.__init__(self, afferents, efferents)
-        left_bump_queue = mp.Queue(maxsize = 1)
-        right_bump_queue = mp.Queue(maxsize = 1)
-        back_bump_queue = mp.Queue(maxsize = 1)
-        front_bump_queue = mp.Queue(maxsize = 1)
-        left_motor_queue = mp.Queue(maxsize = 1)
-        right_motor_queue = mp.Queue(maxsize = 1)
-        right_whisker = DAQC_Whisker([right_bump_queue], 0, 0)
-        left_whisker = DAQC_Whisker([left_bump_queue], 0, 3)
-        back_whisker = DAQC_Whisker([back_bump_queue], 0, 1)
-        front_whisker = DAQC_Whikser([front_bump_queue], 0, 2)
-        p1 = mp.Process(target = right_whisker.run)
-        p2 = mp.Process(target = left_whisker.run)
-        p3 = mp.Process(target = back_whisker.run)
-        p4 = mp.Process(target = front_whisker.run)
-        RuntRoverLeft = RuntRoverSide([left_motor_queue],[1], 'cw', 'ccw', )
-        RuntRoverRight = RuntRoverSide([right_motor_queue], [0], 'cw', 'ccw', )
-        
-    def read(self):
-        if left_bump_queue = mp.Queue 
+
+def test_msg_to_cmds():
+    b = Bump([None, None], [None, None])
+    cmd = b.msg_to_cmds('F')
+    assert cmd == ['srrrrrsfs', 'srrrrrsfffffs']
+
+
+def test_read():
+    # make afferent queue
+    aq = mp.Queue(maxsize=1)
+
+    # make a pair of efferent queues (left, right)
+    eq1 = mp.Queue(maxsize=1)
+    eq2 = mp.Queue(maxsize=1)
+
+    # create bump node
+    b = Bump([aq],[eq1, eq2])
+
+    # send a message in along afferent
+    aq.put('F')
+    time.sleep(0.1)
+
+    # verify msg 
+    msg = b.read()
+    assert msg == 'F'
+
+
+def test_fire():
+    # make afferent queue
+    aq = mp.Queue(maxsize=1)
+
+    # make a pair of efferent queues (left, right)
+    eq1 = mp.Queue(maxsize=1)
+    eq2 = mp.Queue(maxsize=1)
+
+    # create bump node
+    b = Bump([aq],[eq1, eq2])
+
+    # send a message in along afferent
+    aq.put('F')
+    time.sleep(0.1)
+
+    # fire, and count the commands that come out on left and right
+    cmds = b.msg_to_cmds('F')
+    p = mp.Process(target=b.fire, args=(cmds,))
+    p.start()
+    time.sleep(0.1)
+    left = 0
+    right = 0
+    while (not eq1.empty()) or (not eq2.empty()):
+        if not eq1.empty():
+            print("reading left")
+            eq1.get()
+            left += 1
+        if not eq2.empty():
+            print("reading right")
+            eq2.get()
+            right += 1
+        time.sleep(0.1)
+    p.join()
+    print(left, right)
+    assert left == 9
+    assert right == 13
+
+
