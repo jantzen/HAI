@@ -3,6 +3,7 @@ import multiprocessing as mp
 import queue
 import time
 
+
 def test_MPMotor(address=0, number=1, forward_direction='cw', reverse_direction='ccw'):
 
     print("Testing motor {} on board {}".format(number, address))

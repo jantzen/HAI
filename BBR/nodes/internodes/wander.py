@@ -29,16 +29,13 @@ class Wander( Internode ):
     def fire(self):
         for ii in range(self._burst_size):
             for eff in self._efferents:
-                eff.put_nowait('f')
+                if not eff.full():
+                    eff.put('f')
             time.sleep(0.05)
 
 
-    def cleanup(self):
-        pass
-
-
     def run(self):
-        while True:
+        while self._run:
             # wait for a random amount of time
             delay = max(normal(self._mean, self._std), 0.)
             time.sleep(delay)
@@ -48,6 +45,3 @@ class Wander( Internode ):
                 self.fire()
             except:
                 self.cleanup()
-                break
-
-        sys.exit(0)

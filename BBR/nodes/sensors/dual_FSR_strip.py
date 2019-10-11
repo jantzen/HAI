@@ -43,7 +43,7 @@ class Dual_FSR_strips( Sensor ):
 
 
     def run(self):
-        while True:
+        while self._run:
             msg = self.read()
             if not msg is None:
                 self.fire(msg)

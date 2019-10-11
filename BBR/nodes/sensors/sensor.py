@@ -16,6 +16,3 @@ class Sensor( Node ):
     def fire(self):
         pass
 
-
-    def run(self):
-        pass

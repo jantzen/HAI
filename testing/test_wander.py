@@ -31,7 +31,7 @@ def test_fire():
     while not q.empty():
         out.append(q.get())
 
-    assert out == ['f','f','f','f','f']
+    assert out == ['f'] * 10 # assumes default burst_size=10
 
 
 def test_run():
@@ -64,7 +64,7 @@ def test_run():
         out.append(r.get())
 
     print(out)
-    assert out >= ['f','f','f','f','f']
+    assert out >= ['f'] * 10
 
     # cleanup
     p_wander.join()

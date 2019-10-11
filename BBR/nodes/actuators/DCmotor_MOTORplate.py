@@ -172,7 +172,7 @@ class RuntRoverSide( MotorCluster ):
 
 
     def run(self):
-        while True:
+        while self._run:
             try:
                 cmd = None
                 for aff in self._afferents:
@@ -194,6 +194,11 @@ class RuntRoverSide( MotorCluster ):
                 print("queue empty")
                 continue
 
+
+    def terminate(self, signum, frame):
+        print("terminating RuntRoverSide node process with signum={}".format(signum))
+        self._run = False
+        self.quit()
         sys.exit(0)
  
 

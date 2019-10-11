@@ -27,7 +27,7 @@ class Motor( Actuator ):
         pass
 
     def run(self):
-        while True:
+        while self._run:
             try:
                 cmd = None
                 for aff in self._afferents:
@@ -48,10 +48,14 @@ class Motor( Actuator ):
             except queue.Empty:
                 continue
 
-        sys.exit(0)
-
     def cleanup(self):
+        pass
+
+    def terminate(self, signum, frame):
+        print("terminating motor node process with signum={}".format(signum))
+        self._run = False
         self.stop()
+        sys.exit(0)
 
 
 class MotorCluster( Actuator ):
@@ -62,10 +66,6 @@ class MotorCluster( Actuator ):
         belonging to the cluseter
         """
         Actuator.__init__(self, afferents, efferents)
-
-
-    def cleanup(self):
-        pass
 
 
 #class MotorSystem( Actuator ):

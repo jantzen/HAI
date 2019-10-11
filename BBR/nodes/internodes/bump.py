@@ -97,13 +97,9 @@ class Bump ( Internode ):
                 self._efferents[1].put(rc)
             time.sleep(self._pd)
 
-            
-    def cleanup(self):
-        pass
-
     
     def run(self):
-        while True:
+        while self._run:
             try:
                 msg = self.read()
                 if msg is not None:
@@ -112,8 +108,4 @@ class Bump ( Internode ):
                 time.sleep(self._pd)
 
             except:
-                self.cleanup()
-                break
-
-        sys.exit(0)
-
+                self.terminate()
