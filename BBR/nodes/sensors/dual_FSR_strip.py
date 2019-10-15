@@ -8,7 +8,8 @@ import time
 
 class Dual_FSR_strips( Sensor ):
     
-    def __init__(self, 
+    def __init__(self,
+            afferents,
             efferents, 
             board_address=2,
             fore_address=0,
@@ -16,7 +17,7 @@ class Dual_FSR_strips( Sensor ):
             fore_threshold=3.4, 
             aft_threshold=3.2, 
             delay=0.05):
-        Sensor.__init__(self, afferents=None, efferents=efferents)
+        Sensor.__init__(self, afferents=afferents, efferents=efferents)
         self._board_address = board_address
         self._fore_address = fore_address
         self._aft_address = aft_address
@@ -42,10 +43,28 @@ class Dual_FSR_strips( Sensor ):
             time.sleep(self._delay)
 
 
+    def quit(self):
+        print("dual_FSR_strips node quitting")
+        self._run = False
+        for eff in self._efferents:
+            eff.put('q', timeout=5)
+
+
     def run(self):
         while self._run:
-            msg = self.read()
-            if not msg is None:
-                self.fire(msg)
-            time.sleep(self._delay)
-        sys.exit(0)
+            try:
+                # check for quit command:
+                for aff in self._afferents:
+                    if not aff.empty():
+                        tmp = aff.get()
+                        if tmp == 'q':
+                            self.quit()
+                msg = self.read()
+                if not msg is None:
+                    self.fire(msg)
+                time.sleep(self._delay)
+            except KeyboardInterrupt:
+                print("dual_FSR_strips node received keyboard interrupt")
+                self.quit()
+            except:
+                self.quit()

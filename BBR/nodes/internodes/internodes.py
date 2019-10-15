@@ -12,3 +12,7 @@ class Internode( Node ):
 
     def fire(self):
         pass
+
+    
+    def cleanup(self):
+        pass

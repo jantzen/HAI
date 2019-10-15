@@ -139,3 +139,52 @@ def test_RuntRoverSide(address=0, forward_direction='cw', reverse_direction='ccw
 
     p_rr.join()
 
+
+def test_exit_RuntRoverSide(address=0, forward_direction='cw', reverse_direction='ccw'):
+
+    print("Exit testing RuntRover side corresponding to board {}".format(address))
+
+    # create queues for motor afferents
+    q = []
+    for ii in range(3):
+        q.append(mp.Queue(maxsize=1))
+    
+    # create the motor objects
+    motors = []
+    for ii, mq in enumerate(q):
+        motors.append(MPMotor([mq], address, ii+1, forward_direction, 
+            reverse_direction))
+
+    # spawn the motor processes
+    print("Starting motor processes...")
+    m_procs = []
+    for m in motors:
+        m_procs.append(mp.Process(target=m.run))
+    for p in m_procs:
+        p.start()
+
+    # create a queue for the RuntRoverSide
+    q_rr = mp.Queue(maxsize=1)
+
+    # create the RuntRoverSide
+    rr = RuntRoverSide([q_rr], q)
+
+    # spawn RuntRoverSide process
+    p_rr = mp.Process(target=rr.run)
+    p_rr.start()
+
+    # start an outer loop
+    run = True
+    print("press CTRL-C in a few seconds")
+    while run:
+        try:
+            print("doing nothing...")
+            time.sleep(1)
+        except:
+            # set everything down
+            for p in m_procs:
+                p.join()
+
+            p_rr.join()
+            run = False
+

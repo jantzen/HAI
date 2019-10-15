@@ -134,11 +134,12 @@ class RuntRoverSide( MotorCluster ):
     of the Runt Rover chassis.
     """
 
-    def __init__(self, afferents, motor_queues, efferents=None):
+    def __init__(self, ident, afferents, motor_queues, efferents=None):
         if not (type(motor_queues) is list):
             raise ValueError('must provide a list of lists of motor_queues')
         MotorCluster.__init__(self, afferents, efferents)
         self._motor_queues = motor_queues
+        self.ident = ident
 
 
     def start(self):
@@ -166,6 +167,8 @@ class RuntRoverSide( MotorCluster ):
 
 
     def quit(self):
+        print("RuntRoverSide node quitting")
+        self._run = False
         for m in self._motor_queues:
             m.put('q')
             time.sleep(0.1)
@@ -179,6 +182,8 @@ class RuntRoverSide( MotorCluster ):
                     if not aff.empty():
                         cmd = aff.get()
                         break
+                if not cmd == None:
+                    print("RuntRoverSide {0} received command {1}".format(self.ident, cmd))
                 if cmd == 'a':
                     self.start()
                 elif cmd == 's':
@@ -189,17 +194,24 @@ class RuntRoverSide( MotorCluster ):
                     self.reverse()
                 elif cmd == 'q':
                     self.quit()
-                    break
             except queue.Empty:
                 print("queue empty")
                 continue
+            except KeyboardInterrupt:
+                print("RunRoverSide node received keyboard interrupt...")
+                self._run = False
+                self.quit()
+                self.cleanup()
+            except:
+                self._run = False
+                self.quit()
+                self.cleanup()
 
 
-    def terminate(self, signum, frame):
-        print("terminating RuntRoverSide node process with signum={}".format(signum))
-        self._run = False
-        self.quit()
-        sys.exit(0)
+#    def terminate(self, signum, frame):
+#        print("terminating RuntRoverSide node process with signum={}".format(signum))
+#        self._run = False
+#        self.quit()
  
 
 

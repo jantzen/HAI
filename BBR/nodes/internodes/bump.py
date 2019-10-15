@@ -1,5 +1,4 @@
 from BBR.nodes.internodes.internodes import Internode
-import sys
 import time
 
 
@@ -31,6 +30,7 @@ class Bump ( Internode ):
         self._pd = polling_delay
         self._fd = firing_delay
         
+
     def msg_to_cmds(self, msg):
         if msg == 'F':
             cmd = ['srrrrrsfs', 'srrrrrsfffffs']
@@ -57,7 +57,6 @@ class Bump ( Internode ):
         return cmd
            
 
-
     def read(self):
         # read from afferents;
         # return a string indicating bump region from first non-empty afferent
@@ -66,9 +65,10 @@ class Bump ( Internode ):
             try:
                 if not aff.empty():
                     msg = aff.get()
+                    print("Bump node read afferent.")
                     break
             except queue.Empty:
-                print("Queue empty")
+                print("Bump node detected an empty queue.")
                 continue
         return msg
 
@@ -89,23 +89,34 @@ class Bump ( Internode ):
             except IndexError:
                 rc = None
             if not lc is None:
-                print("writing left")
+                print("Bump node writing to left side")
                 self._efferents[0].put(lc)
-            time.sleep(self._pd)
+            time.sleep(self._fd)
             if not rc is None:
-                print("writing right")
+                print("Bump node writing to right side")
                 self._efferents[1].put(rc)
-            time.sleep(self._pd)
+            time.sleep(self._fd)
 
     
+    def quit(self):
+        print("bump node quitting")
+        self._run = False
+        for eff in self._efferents:
+            eff.put('q', timeout=5)
+
+
     def run(self):
         while self._run:
             try:
                 msg = self.read()
-                if msg is not None:
+                if msg == 'q':
+                    self.quit()
+                elif msg is not None:
                     cmds = self.msg_to_cmds(msg)
                     self.fire(cmds)
                 time.sleep(self._pd)
-
+            except KeyboardInterrupt:
+                print("bump node received keyboard interupt")
+                self.quit()
             except:
-                self.terminate()
+                self.quit()

@@ -1,7 +1,6 @@
 """Contains the template classes for describing DC motor actuators.
 """
 from BBR.nodes.actuators.actuator import *
-import sys
 import queue
 
 class Motor( Actuator ):
@@ -43,19 +42,26 @@ class Motor( Actuator ):
                 elif cmd == 'r':
                     self.reverse()
                 elif cmd == 'q':
-                    self.cleanup()
+                    self.quit()
                     break
             except queue.Empty:
                 continue
+            except:
+                self._run = False
+                self.stop()
+                self.cleanup()
 
-    def cleanup(self):
-        pass
-
-    def terminate(self, signum, frame):
-        print("terminating motor node process with signum={}".format(signum))
-        self._run = False
+    def quit(self):
+        print("Motor node quitting.")
         self.stop()
-        sys.exit(0)
+        self._run = False
+
+#    def terminate(self, signum, frame):
+#        print("terminating motor node process with signum={}".format(signum))
+#        self._run = False
+#        seld.stop()
+#        self.cleanup()
+#        sys.exit(0)
 
 
 class MotorCluster( Actuator ):

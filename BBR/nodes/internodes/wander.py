@@ -1,5 +1,4 @@
 from BBR.nodes.internodes.internodes import Internode
-import sys
 import time
 from numpy.random import normal
 
@@ -11,7 +10,7 @@ class Wander( Internode ):
 
     def __init__(self,
             efferents,
-            afferents=None,
+            afferents,
             mean=3., # mean of normal distribution of action delays
             std=1., # standard deviation of the distribution
             burst_size=10 # number of forward commands to send on fire
@@ -27,6 +26,7 @@ class Wander( Internode ):
 
 
     def fire(self):
+        print("Wander node firing.")
         for ii in range(self._burst_size):
             for eff in self._efferents:
                 if not eff.full():
@@ -34,14 +34,35 @@ class Wander( Internode ):
             time.sleep(0.05)
 
 
+    def quit(self):
+        print("wander node quitting")
+        self._run = False
+#        for eff in self._efferents:
+#            eff.put('q', timeout=5)
+
+
     def run(self):
         while self._run:
-            # wait for a random amount of time
-            delay = max(normal(self._mean, self._std), 0.)
-            time.sleep(delay)
-            
             try:
-                # stimulate movement
-                self.fire()
+                fire = True
+                start = time.time()
+                delay = max(normal(self._mean, self._std), 0.1)
+                # wait for a random amount of time
+                while time.time() < start + delay:
+                        # check for a quit command
+                        for aff in self._afferents:
+                            if not aff.empty():
+                                cmd = aff.get()
+                                if cmd == 'q':
+                                    self.quit()
+                                    fire = False
+                if fire:
+                    # stimulate movement
+                    self.fire()
+            except KeyboardInterrupt:
+                print("wander node received keyboard interrupt")
+                self.quit()
             except:
-                self.cleanup()
+                self.quit()
+
+
