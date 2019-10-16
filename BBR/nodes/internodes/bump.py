@@ -111,6 +111,7 @@ class Bump ( Internode ):
                 msg = self.read()
                 if msg == 'q':
                     self.quit()
+                    self._run = False
                 elif msg is not None:
                     cmds = self.msg_to_cmds(msg)
                     self.fire(cmds)
@@ -118,5 +119,7 @@ class Bump ( Internode ):
             except KeyboardInterrupt:
                 print("bump node received keyboard interupt")
                 self.quit()
+                self._run = False
             except:
                 self.quit()
+                self._run = False

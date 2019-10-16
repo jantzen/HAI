@@ -1,7 +1,6 @@
 from BBR.nodes.internodes.internodes import Internode
 import time
-from numpy.random import normal
-
+import numpy as np
 
 class Wander( Internode ):
     """An internode class for generating random 
@@ -11,9 +10,9 @@ class Wander( Internode ):
     def __init__(self,
             efferents,
             afferents,
-            mean=3., # mean of normal distribution of action delays
-            std=1., # standard deviation of the distribution
-            burst_size=10 # number of forward commands to send on fire
+            mean=2., # mean of normal distribution of action delays
+            std=0.5, # standard deviation of the distribution
+#            burst_size=10 # number of forward commands to send on fire
             ):
 
         if not len(efferents) >= 1:
@@ -22,15 +21,20 @@ class Wander( Internode ):
         Internode.__init__(self, afferents, efferents)
         self._mean = mean
         self._std = std
-        self._burst_size = burst_size
+#        self._burst_size = burst_size
 
 
     def fire(self):
-        print("Wander node firing.")
-        for ii in range(self._burst_size):
-            for eff in self._efferents:
-                if not eff.full():
-                    eff.put('f')
+        print("wander node firing.")
+        index_array = np.arange(len(self._efferents))
+        np.random.shuffle(index_array)
+        for index in index_array:
+            eff = self._efferents[index]
+            if eff.full():
+                print("wander node efferent {} is full".format(index))
+            else:
+                print("wander node sending msg to efferent {}".format(index))
+                eff.put('f')
             time.sleep(0.05)
 
 
@@ -44,9 +48,9 @@ class Wander( Internode ):
     def run(self):
         while self._run:
             try:
-                fire = True
+                fire_status = True
                 start = time.time()
-                delay = max(normal(self._mean, self._std), 0.1)
+                delay = max(np.random.normal(self._mean, self._std), 0.1)
                 # wait for a random amount of time
                 while time.time() < start + delay:
                         # check for a quit command
@@ -55,14 +59,16 @@ class Wander( Internode ):
                                 cmd = aff.get()
                                 if cmd == 'q':
                                     self.quit()
-                                    fire = False
-                if fire:
+                                    fire_status = False
+                        time.sleep(0.05)
+                if fire_status:
                     # stimulate movement
                     self.fire()
             except KeyboardInterrupt:
                 print("wander node received keyboard interrupt")
                 self.quit()
             except:
+                print("wander node caught an exception")
                 self.quit()
 
 

@@ -42,7 +42,7 @@ def main():
         motors_left.append(MPMotor([mq], 0, ii+1, forward_direction='cw', 
             reverse_direction='ccw', max_run_speed=50))
     motors_right = []
-    for ii, mq in enumerate(mq_left):
+    for ii, mq in enumerate(mq_right):
         motors_right.append(MPMotor([mq], 1, ii+1, forward_direction='ccw', 
             reverse_direction='cw', max_run_speed=50))
 
@@ -119,7 +119,7 @@ def main():
                 proc_rr_left.join()
                 print("...right rr join...")
                 proc_rr_right.join()
-                print("...wander joinr...")
+                print("...wander join...")
                 proc_w.join()
                 run = False
 

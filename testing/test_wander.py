@@ -13,7 +13,6 @@ def helper(q, r):
                 r.put(q.get())
         except:
             break
-    sys.exit(0)
 
 
 def test_fire():
@@ -21,7 +20,7 @@ def test_fire():
     q = mp.Queue()
 
     # set up wander object
-    w = Wander([q])
+    w = Wander([q], [])
 
     # trigger the 'fire' method
     w.fire()
@@ -31,7 +30,7 @@ def test_fire():
     while not q.empty():
         out.append(q.get())
 
-    assert out == ['f'] * 10 # assumes default burst_size=10
+    assert out == ['f']
 
 
 def test_run():
@@ -42,7 +41,7 @@ def test_run():
     r = mp.Queue()
 
     # set up wander object
-    w = Wander([q])
+    w = Wander([q],[])
 
     # launch wander and helper processes
     p_wander = mp.Process(target=w.run)
@@ -51,8 +50,8 @@ def test_run():
     p_helper.start()
     
     # wait for output to accumulate
-    print("Please wait 10 seconds...")
-    time.sleep(10.)
+    print("Please wait 4 seconds...")
+    time.sleep(4.)
 
     # stop processes
     p_wander.terminate()
@@ -64,7 +63,7 @@ def test_run():
         out.append(r.get())
 
     print(out)
-    assert out >= ['f'] * 10
+    assert len(out) >= 1
 
     # cleanup
     p_wander.join()
