@@ -33,11 +33,14 @@ class Bump ( Internode ):
 
     def msg_to_cmds(self, msg):
         if msg == 'F':
-            cmd = ['srrrrrsfs', 'srrrrrsfffffs']
+#            cmd = ['srrrrrsfs', 'srrrrrsfffffs']
+            cmd = ['s'+'r'*10+'sfs', 's'+'r'*10+'s'+'f'*6+'s']
         elif msg == 'FL':
-            cmd = ['srrrrrsfs', 'srrrrrsfffffs']
+#            cmd = ['srrrrrsfs', 'srrrrrsfffffs']
+            cmd = ['s'+'r'*10+'sfs', 's'+'r'*10+'s'+'f'*6+'s']
         elif msg == 'FR':
-            cmd = ['srrrrrsfffffs','srrrrrsfs']
+#            cmd = ['srrrrrsfffffs','srrrrrsfs']
+            cmd = ['s'+'r'*10+'s'+'f'*6+'s', 's'+'r'*10+'sfs']
         elif msg == 'FLM':
             cmd = ['','']
         elif msg == 'FRM':
@@ -47,11 +50,14 @@ class Bump ( Internode ):
         elif msg == 'RRM':
             cmd = ['','']
         elif msg == 'RL':
-            cmd = ['sfffffsfffffs', 'sfffffsfs']
+#            cmd = ['sfffffsfffffs', 'sfffffsfs']
+            cmd = ['s'+'f'*10+'s'+'f'*6+'s', 's'+'f'*10+'s'+'f'*3+'s']
         elif msg == 'RR':
-            cmd = ['sfffffsfs', 'sfffffsfffffs']
+#            cmd = ['sfffffsfs', 'sfffffsfffffs']
+            cmd = ['s'+'f'*10+'s'+'f'*3+'s', 's'+'f'*10+'s'+'f'*6+'s']
         elif msg == 'R':
-            cmd = ['sfffffsfffffs', 'sfffffsfs']
+#            cmd = ['sfffffsfffffs', 'sfffffsfs']
+            cmd = ['s'+'f'*10+'s'+'f'*6+'s', 's'+'f'*10+'s'+'f'*3+'s']
         else:
             raise ValueError('nonsense message received by bump node')
         return cmd
