@@ -54,7 +54,7 @@ class MPMotor( Motor ):
         MOTORplate.dcSTOP(self._address, self._number)
         time.sleep(self._acceleration)
         self.speed = 0
-        self._direction = self._forward
+        self.direction = self._forward
         MOTORplate.dcCONFIG(self._address, self._number, self.direction, self.speed, self._acceleration)
         self._stopped = True
  
