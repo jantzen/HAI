@@ -1,15 +1,18 @@
-from BBR.nodes.node import Node
+from BBR.nodes.nodes import Node
 
 class Internode( Node ):
 
     def __init__(self, afferents, efferents):
-        Node.__init__(self, afferents=afferents,efferents=efferents)
+        Node.__init__(self, afferents,efferents)
+
 
     def read(self):
         pass
 
+
     def fire(self):
         pass
+
     
-    def run(self):
+    def cleanup(self):
         pass
